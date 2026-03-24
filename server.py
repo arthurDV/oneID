@@ -231,10 +231,13 @@ class AgentIdentityHandler(BaseHTTPRequestHandler):
                 phone = None
                 phone_sid = None
                 if TWILIO_READY:
-                    print(f"  → Numéro de téléphone...")
-                    sms = buy_phone_number(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
-                    phone = sms["phone"]
-                    phone_sid = sms["phone_sid"]
+                    try:
+                        print(f"  → Numéro de téléphone...")
+                        sms = buy_phone_number(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+                        phone = sms["phone"]
+                        phone_sid = sms["phone_sid"]
+                    except Exception as e:
+                        print(f"  ⚠️  Téléphone non disponible : {e}")
 
                 identity_id = str(uuid.uuid4())[:8]
                 identity = {
