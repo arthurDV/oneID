@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>OneID — One call. One identity.</title>
+  <title>Droid — One call. One identity.</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -385,7 +385,7 @@
   </div>
 
   <nav>
-    <div class="logo">OneID</div>
+    <div class="logo">Droid</div>
     <a href="#early-access" class="nav-cta">Get access</a>
   </nav>
 
@@ -396,7 +396,7 @@
       <h1 id="hero-title">One call.<br>One identity.</h1>
 
       <p class="hero-sub" id="hero-sub">
-        Your agent needs a name, an email, and a phone number to exist on the internet. OneID creates all three instantly.
+        Your agent needs a name, an email, and a phone number to exist on the internet. Droid creates all three instantly.
       </p>
 
       <div class="hero-actions">
@@ -420,7 +420,7 @@
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(196,132,252,0.85)" stroke-width="2.2" stroke-linecap="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
             </div>
             <span class="human-label">Email</span>
-            <span class="human-value">sophie.baker@oneid.io</span>
+            <span class="human-value">sophie.baker@droid.io</span>
           </div>
           <div class="human-row">
             <div class="human-icon hi-cyan">
@@ -440,18 +440,18 @@
             <span class="t-dot t-red"></span>
             <span class="t-dot t-yellow"></span>
             <span class="t-dot t-green"></span>
-            <span class="terminal-title">oneid — python3</span>
+            <span class="terminal-title">droid — python3</span>
           </div>
           <div class="terminal-body">
-<span class="t-prompt">$ </span><span class="t-cmd">pip install oneid</span>
-<span class="t-out">Successfully installed oneid-1.0.0</span>
+<span class="t-prompt">$ </span><span class="t-cmd">pip install droid</span>
+<span class="t-out">Successfully installed droid-1.0.0</span>
 
 <span class="t-prompt">$ </span><span class="t-cmd">python3</span>
-<span class="t-prompt">&gt;&gt;&gt; </span><span class="t-cmd">from oneid import create</span>
+<span class="t-prompt">&gt;&gt;&gt; </span><span class="t-cmd">from droid import create</span>
 <span class="t-prompt">&gt;&gt;&gt; </span><span class="t-cmd">agent = create()</span>
 <span class="t-out">{</span>
 <span class="t-out">  <span class="t-key">"name"</span>:  <span class="t-str">"Sophie Baker"</span>,</span>
-<span class="t-out">  <span class="t-key">"email"</span>: <span class="t-str">"sophie.baker@oneid.io"</span>,</span>
+<span class="t-out">  <span class="t-key">"email"</span>: <span class="t-str">"sophie.baker@droid.io"</span>,</span>
 <span class="t-out">  <span class="t-key">"phone"</span>: <span class="t-str">"+1 361 322 2054"</span></span>
 <span class="t-out">}</span>
 <span class="t-prompt">&gt;&gt;&gt; </span><span class="t-cmd">agent.code()</span>
@@ -509,7 +509,7 @@
         <div class="step">
           <div class="step-num">03</div>
           <div class="step-title">Verify</div>
-          <div class="step-desc">Confirmation email or SMS code? OneID reads it, extracts it, your agent moves on.</div>
+          <div class="step-desc">Confirmation email or SMS code? Droid reads it, extracts it, your agent moves on.</div>
         </div>
       </div>
     </section>
@@ -518,13 +518,13 @@
     <div class="cta-section" id="early-access">
       <div class="cta-card">
         <h2>Give your agent<br>an identity.</h2>
-        <p>OneID is in beta. Get early access and start building agents that interact with the real world.</p>
-        <a href="mailto:arthur@oneid.dev" class="btn-primary">Get access</a>
+        <p>Droid is in beta. Get early access and start building agents that interact with the real world.</p>
+        <a href="mailto:arthur@droid.dev" class="btn-primary">Get access</a>
       </div>
     </div>
   </main>
 
-  <footer>&copy; 2026 OneID</footer>
+  <footer>&copy; 2026 Droid</footer>
 
   <!-- FIXED BOTTOM TOGGLE -->
   <div class="mode-toggle">
@@ -552,15 +552,15 @@
         btnH.classList.add('active');
         btnA.classList.remove('active');
         title.innerHTML = 'One call.<br>One identity.';
-        sub.textContent = 'Your agent needs a name, an email, and a phone number to exist on the internet. OneID creates all three instantly.';
+        sub.textContent = 'Your agent needs a name, an email, and a phone number to exist on the internet. Droid creates all three instantly.';
       } else {
         document.body.classList.add('agent-mode');
         agent.classList.remove('hidden');
         human.classList.add('hidden');
         btnA.classList.add('active');
         btnH.classList.remove('active');
-        title.innerHTML = '$ oneid create';
-        sub.textContent = 'pip install oneid — then call create(). Your agent gets a real name, email, and phone. Read verification codes with agent.code().';
+        title.innerHTML = '$ droid create';
+        sub.textContent = 'pip install droid — then call create(). Your agent gets a real name, email, and phone. Read verification codes with agent.code().';
       }
     }
   </script>
