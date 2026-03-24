@@ -31,8 +31,12 @@ def buy_phone_number(account_sid, auth_token, country="US"):
         headers={"Authorization": _auth_header(account_sid, auth_token)},
         method="GET",
     )
-    with urllib.request.urlopen(req) as resp:
-        results = json.loads(resp.read())
+    try:
+        with urllib.request.urlopen(req) as resp:
+            results = json.loads(resp.read())
+    except urllib.error.HTTPError as e:
+        body = e.read().decode()
+        raise Exception(f"Twilio search {e.code}: {body}")
 
     available = results.get("available_phone_numbers", [])
     if not available:
@@ -53,8 +57,12 @@ def buy_phone_number(account_sid, auth_token, country="US"):
         },
         method="POST",
     )
-    with urllib.request.urlopen(req) as resp:
-        result = json.loads(resp.read())
+    try:
+        with urllib.request.urlopen(req) as resp:
+            result = json.loads(resp.read())
+    except urllib.error.HTTPError as e:
+        body = e.read().decode()
+        raise Exception(f"Twilio buy {e.code}: {body}")
 
     return {
         "phone": result["phone_number"],

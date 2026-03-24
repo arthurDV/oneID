@@ -30,12 +30,16 @@ def create_inbox(api_key, first_name, last_name):
         method="POST",
     )
 
-    with urllib.request.urlopen(req) as resp:
-        result = json.loads(resp.read())
-        return {
-            "inbox_id": result["id"],
-            "email": result["emailAddress"],
-        }
+    try:
+        with urllib.request.urlopen(req) as resp:
+            result = json.loads(resp.read())
+            return {
+                "inbox_id": result["id"],
+                "email": result["emailAddress"],
+            }
+    except urllib.error.HTTPError as e:
+        body = e.read().decode()
+        raise Exception(f"MailSlurp {e.code}: {body}")
 
 
 def get_emails(api_key, inbox_id):
