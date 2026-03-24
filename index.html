@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agent Identity — Give your agent a real identity</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --blur: blur(40px) saturate(180%);
+      --glass-bg: rgba(255,255,255,0.06);
+      --glass-border: rgba(255,255,255,0.12);
+      --glass-shadow: 0 8px 48px rgba(0,0,0,0.4);
+    }
+
+    body {
+      background: #080810;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Animated background orbs */
+    .bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.35;
+      animation: drift 18s ease-in-out infinite alternate;
+    }
+    .orb-1 { width: 600px; height: 600px; background: radial-gradient(circle, #5b6ef5, transparent); top: -100px; left: -100px; animation-duration: 20s; }
+    .orb-2 { width: 500px; height: 500px; background: radial-gradient(circle, #a855f7, transparent); top: 20%; right: -150px; animation-duration: 25s; animation-delay: -5s; }
+    .orb-3 { width: 400px; height: 400px; background: radial-gradient(circle, #06b6d4, transparent); bottom: 0; left: 30%; animation-duration: 22s; animation-delay: -10s; }
+
+    @keyframes drift {
+      from { transform: translate(0, 0) scale(1); }
+      to   { transform: translate(60px, 40px) scale(1.1); }
+    }
+
+    /* Nav */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 48px;
+      backdrop-filter: blur(20px) saturate(180%);
+      background: rgba(8,8,16,0.6);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .logo {
+      font-size: 17px;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+      color: #fff;
+    }
+    .logo span { opacity: 0.4; }
+    .nav-cta {
+      padding: 9px 20px;
+      border-radius: 100px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s, border-color 0.2s;
+      backdrop-filter: blur(10px);
+    }
+    .nav-cta:hover { background: rgba(255,255,255,0.16); border-color: rgba(255,255,255,0.25); }
+
+    /* Layout */
+    main { position: relative; z-index: 1; }
+
+    /* Hero */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 24px 80px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: 100px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      font-size: 13px;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 36px;
+      backdrop-filter: blur(10px);
+    }
+    .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: #5b6ef5; box-shadow: 0 0 8px #5b6ef5; animation: pulse 2s ease-in-out infinite; }
+    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+
+    h1 {
+      font-size: clamp(42px, 7vw, 88px);
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: -2.5px;
+      max-width: 900px;
+      background: linear-gradient(160deg, #ffffff 0%, rgba(255,255,255,0.55) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 24px;
+    }
+
+    .hero-sub {
+      font-size: clamp(16px, 2vw, 20px);
+      color: rgba(255,255,255,0.45);
+      max-width: 520px;
+      line-height: 1.6;
+      margin-bottom: 48px;
+      font-weight: 400;
+      letter-spacing: -0.2px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 80px;
+    }
+    .btn-primary {
+      padding: 14px 32px;
+      border-radius: 100px;
+      background: linear-gradient(135deg, #5b6ef5, #a855f7);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      letter-spacing: -0.2px;
+      transition: opacity 0.2s, transform 0.2s;
+      box-shadow: 0 4px 24px rgba(91,110,245,0.4);
+    }
+    .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+    .btn-secondary {
+      padding: 14px 32px;
+      border-radius: 100px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.75);
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s;
+      backdrop-filter: blur(10px);
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,0.12); }
+
+    /* Code card */
+    .code-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      backdrop-filter: var(--blur);
+      box-shadow: var(--glass-shadow);
+      padding: 32px 40px;
+      max-width: 580px;
+      width: 100%;
+      text-align: left;
+    }
+    .code-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.25);
+      margin-bottom: 20px;
+    }
+    pre {
+      font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+      font-size: 14px;
+      line-height: 1.8;
+      color: rgba(255,255,255,0.85);
+    }
+    .c-method { color: #a5b4fc; }
+    .c-url    { color: #f0f0f0; }
+    .c-key    { color: #86efac; }
+    .c-val    { color: #fcd34d; }
+    .c-dim    { color: rgba(255,255,255,0.3); }
+
+    /* Section */
+    section {
+      padding: 100px 24px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .section-title {
+      font-size: clamp(28px, 4vw, 48px);
+      font-weight: 700;
+      letter-spacing: -1.5px;
+      text-align: center;
+      margin-bottom: 64px;
+      background: linear-gradient(160deg, #fff 0%, rgba(255,255,255,0.5) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Feature grid */
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 16px;
+    }
+
+    .glass-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      backdrop-filter: var(--blur);
+      box-shadow: var(--glass-shadow);
+      padding: 36px;
+      transition: background 0.3s, border-color 0.3s, transform 0.3s;
+    }
+    .glass-card:hover {
+      background: rgba(255,255,255,0.09);
+      border-color: rgba(255,255,255,0.18);
+      transform: translateY(-4px);
+    }
+
+    .card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin-bottom: 24px;
+    }
+    .icon-blue   { background: rgba(91,110,245,0.2);  border: 1px solid rgba(91,110,245,0.3);  }
+    .icon-purple { background: rgba(168,85,247,0.2);  border: 1px solid rgba(168,85,247,0.3);  }
+    .icon-cyan   { background: rgba(6,182,212,0.2);   border: 1px solid rgba(6,182,212,0.3);   }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 650;
+      letter-spacing: -0.4px;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+    .card-desc {
+      font-size: 15px;
+      color: rgba(255,255,255,0.42);
+      line-height: 1.65;
+    }
+    .card-tag {
+      display: inline-block;
+      margin-top: 20px;
+      font-family: "SF Mono", monospace;
+      font-size: 12px;
+      color: rgba(255,255,255,0.3);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+
+    /* Steps */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 2px;
+    }
+    .step {
+      padding: 40px 36px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: var(--blur);
+    }
+    .step:first-child { border-radius: 24px 0 0 24px; }
+    .step:last-child  { border-radius: 0 24px 24px 0; }
+    @media (max-width: 700px) {
+      .step:first-child { border-radius: 24px 24px 0 0; }
+      .step:last-child  { border-radius: 0 0 24px 24px; }
+    }
+    .step-num {
+      font-size: 13px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.2);
+      margin-bottom: 16px;
+      letter-spacing: 0.5px;
+    }
+    .step-title {
+      font-size: 17px;
+      font-weight: 650;
+      letter-spacing: -0.3px;
+      margin-bottom: 10px;
+    }
+    .step-desc {
+      font-size: 14px;
+      color: rgba(255,255,255,0.38);
+      line-height: 1.7;
+    }
+
+    /* CTA section */
+    .cta-section {
+      text-align: center;
+      padding: 80px 24px 120px;
+      position: relative;
+      z-index: 1;
+    }
+    .cta-card {
+      max-width: 680px;
+      margin: 0 auto;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 32px;
+      backdrop-filter: var(--blur);
+      box-shadow: var(--glass-shadow), 0 0 80px rgba(91,110,245,0.1);
+      padding: 64px 48px;
+    }
+    .cta-card h2 {
+      font-size: clamp(28px, 4vw, 40px);
+      font-weight: 700;
+      letter-spacing: -1.2px;
+      margin-bottom: 16px;
+      background: linear-gradient(160deg, #fff 0%, rgba(255,255,255,0.55) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .cta-card p {
+      color: rgba(255,255,255,0.38);
+      font-size: 16px;
+      margin-bottom: 36px;
+      line-height: 1.6;
+    }
+
+    /* Footer */
+    footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 32px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.2);
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <nav>
+    <div class="logo">Agent Identity <span>API</span></div>
+    <a href="#early-access" class="nav-cta">Get early access</a>
+  </nav>
+
+  <main>
+    <!-- HERO -->
+    <div class="hero">
+      <div class="badge">
+        <span class="badge-dot"></span>
+        Now in private beta
+      </div>
+
+      <h1>Give your agent<br>a real identity.</h1>
+
+      <p class="hero-sub">
+        One API call. A real name, email, and phone number.
+        Your agent can sign up anywhere, receive verification codes, and act autonomously.
+      </p>
+
+      <div class="hero-actions">
+        <a href="#early-access" class="btn-primary">Get early access</a>
+        <a href="#how" class="btn-secondary">See how it works</a>
+      </div>
+
+      <div class="code-card">
+        <div class="code-label">One call. Complete identity.</div>
+        <pre><span class="c-method">POST</span> <span class="c-url">/identities</span>
+
+<span class="c-dim">→</span> <span class="c-dim">{</span>
+    <span class="c-key">"name"</span><span class="c-dim">:</span>  <span class="c-val">"Sophie Baker"</span><span class="c-dim">,</span>
+    <span class="c-key">"email"</span><span class="c-dim">:</span> <span class="c-val">"sophie.baker@..."</span><span class="c-dim">,</span>
+    <span class="c-key">"phone"</span><span class="c-dim">:</span> <span class="c-val">"+1 361 320 8179"</span>
+<span class="c-dim">}</span></pre>
+      </div>
+    </div>
+
+    <!-- FEATURES -->
+    <section>
+      <div class="section-label">What it does</div>
+      <div class="section-title">Everything your agent needs<br>to exist in the real world.</div>
+
+      <div class="grid-3">
+        <div class="glass-card">
+          <div class="card-icon icon-blue">⚡</div>
+          <div class="card-title">Instant identity</div>
+          <div class="card-desc">A real name, a working email address, and a real phone number — provisioned in a single API call.</div>
+          <div class="card-tag">POST /identities</div>
+        </div>
+
+        <div class="glass-card">
+          <div class="card-icon icon-purple">📬</div>
+          <div class="card-title">Unified inbox</div>
+          <div class="card-desc">Your agent reads its own emails and SMS messages via API. All channels, one interface.</div>
+          <div class="card-tag">GET /identities/:id/inbox</div>
+        </div>
+
+        <div class="glass-card">
+          <div class="card-icon icon-cyan">🔑</div>
+          <div class="card-title">Verification codes</div>
+          <div class="card-desc">Automatically extracts OTP and confirmation codes from incoming messages. Your agent never gets stuck.</div>
+          <div class="card-tag">GET /identities/:id/verification-code</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section id="how">
+      <div class="section-label">How it works</div>
+      <div class="section-title">Three steps.<br>Full autonomy.</div>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">01</div>
+          <div class="step-title">Create an identity</div>
+          <div class="step-desc">Call POST /identities. Get a real name, email, and phone number back instantly.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">02</div>
+          <div class="step-title">Sign up anywhere</div>
+          <div class="step-desc">Your agent uses the identity to register on any website or service — just like a human would.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">03</div>
+          <div class="step-title">Read and act</div>
+          <div class="step-desc">Verification codes, confirmation emails, SMS — your agent reads them all and keeps going.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <div class="cta-section" id="early-access">
+      <div class="cta-card">
+        <h2>Ready to give your<br>agent an identity?</h2>
+        <p>Agent Identity is in private beta.<br>Join the waitlist and get early API access.</p>
+        <a href="mailto:hello@agentidentity.io" class="btn-primary">Join the waitlist</a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    © 2026 Agent Identity — Built for the agentic era.
+  </footer>
+
+</body>
+</html>

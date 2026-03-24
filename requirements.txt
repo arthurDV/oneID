@@ -1,0 +1,2 @@
+# OneID — pas de dépendances externes
+# Tout est built-in Python (urllib, json, http.server)

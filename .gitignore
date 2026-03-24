@@ -1,0 +1,12 @@
+# Clés API — jamais sur GitHub
+.env.local
+.env
+
+# Données locales
+data/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.DS_Store
