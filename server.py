@@ -1,5 +1,5 @@
 """
-Droid — Agent Identity API
+Alakazam — Agent Identity API
 Give any AI agent a real identity in one API call.
 
 One token = one identity. No IDs in URLs. Dead simple.
@@ -232,7 +232,7 @@ if __name__ == "__main__":
     server = HTTPServer(("0.0.0.0", port), AgentIdentityHandler)
     print(f"""
 ╔══════════════════════════════════════════╗
-║     Droid — Agent Identity API           ║
+║     Alakazam — Agent Identity API           ║
 ║                                          ║
 ║  🚀 http://localhost:{port}                ║
 ║                                          ║

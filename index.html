@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Droid — Agent Identity for the Real World</title>
+  <title>Alakazam — Agent Identity for the Real World</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
@@ -409,7 +409,7 @@
 <body>
 
   <nav>
-    <div class="logo">Droid</div>
+    <div class="logo">Alakazam</div>
     <div class="nav-right">
       <a href="#early-access" class="nav-cta">Contact</a>
     </div>
@@ -425,7 +425,7 @@
       </h1>
 
       <p class="hero-sub" id="hero-sub">
-        Your agent needs a name, an email, and a phone number to exist on the internet. Droid creates all three in one API call.
+        Your agent needs a name, an email, and a phone number to exist on the internet. Alakazam creates all three in one API call.
       </p>
 
       <div class="hero-actions">
@@ -445,7 +445,7 @@
           <div class="human-row">
             <div class="human-icon">✉️</div>
             <span class="human-label">Email</span>
-            <span class="human-value">sophie.baker@droid.io</span>
+            <span class="human-value">sophie.baker@alakazam.io</span>
           </div>
           <div class="human-row">
             <div class="human-icon">📱</div>
@@ -463,7 +463,7 @@
             <span class="t-dot t-red"></span>
             <span class="t-dot t-yellow"></span>
             <span class="t-dot t-green"></span>
-            <span class="terminal-title">droid — terminal</span>
+            <span class="terminal-title">alakazam — terminal</span>
           </div>
           <div class="terminal-body">
 <span class="t-comment"># create an identity</span>
@@ -471,7 +471,7 @@
 <span class="t-out">{</span>
 <span class="t-out">  <span class="t-key">"token"</span>: <span class="t-str">"eyJhbGciOiJIUzI1NiJ9..."</span>,</span>
 <span class="t-out">  <span class="t-key">"name"</span>:  <span class="t-str">"Sophie Baker"</span>,</span>
-<span class="t-out">  <span class="t-key">"email"</span>: <span class="t-str">"sophie.baker@droid.io"</span>,</span>
+<span class="t-out">  <span class="t-key">"email"</span>: <span class="t-str">"sophie.baker@alakazam.io"</span>,</span>
 <span class="t-out">  <span class="t-key">"phone"</span>: <span class="t-str">"+1 361 322 2054"</span></span>
 <span class="t-out">}</span>
 
@@ -488,7 +488,7 @@
     <!-- ═══════════════ HUMAN SECTIONS ═══════════════ -->
     <div class="human-section">
       <section>
-        <div class="section-eyebrow">Why Droid</div>
+        <div class="section-eyebrow">Why Alakazam</div>
         <div class="section-title">Your agent can't exist<br>on the internet. Until now.</div>
         <div class="grid-3">
           <div class="feat-card">
@@ -562,7 +562,7 @@
               <pre>{
   <span class="hl-key">"token"</span>: <span class="hl-str">"eyJhbGciOiJIUzI1NiJ9.eyJpZCI6ImE1YjJ..."</span>,  <span class="hl-comment">// store this</span>
   <span class="hl-key">"name"</span>:  <span class="hl-str">"Sophie Baker"</span>,
-  <span class="hl-key">"email"</span>: <span class="hl-str">"sophie.baker@droid.io"</span>,
+  <span class="hl-key">"email"</span>: <span class="hl-str">"sophie.baker@alakazam.io"</span>,
   <span class="hl-key">"phone"</span>: <span class="hl-str">"+1 361 322 2054"</span>    <span class="hl-comment">// null if unavailable</span>
 }</pre>
             </div>
@@ -585,7 +585,7 @@
             <div class="pre-section">
               <div class="pre-label">Response 200</div>
               <pre>{
-  <span class="hl-key">"identity"</span>: { <span class="hl-key">"name"</span>: <span class="hl-str">"Sophie Baker"</span>, <span class="hl-key">"email"</span>: <span class="hl-str">"sophie.baker@droid.io"</span> },
+  <span class="hl-key">"identity"</span>: { <span class="hl-key">"name"</span>: <span class="hl-str">"Sophie Baker"</span>, <span class="hl-key">"email"</span>: <span class="hl-str">"sophie.baker@alakazam.io"</span> },
   <span class="hl-key">"count"</span>: 1,
   <span class="hl-key">"emails"</span>: [
     {
@@ -661,13 +661,13 @@
     <div class="cta-section" id="early-access">
       <div class="cta-inner">
         <h2 id="cta-title">Give your agent<br>an identity.</h2>
-        <p id="cta-desc">Droid is in beta. Get early access and start building agents that interact with the real world.</p>
-        <a href="mailto:arthur@droid.dev" class="btn-primary">Contact</a>
+        <p id="cta-desc">Alakazam is in beta. Get early access and start building agents that interact with the real world.</p>
+        <a href="mailto:arthur@alakazam.dev" class="btn-primary">Contact</a>
       </div>
     </div>
   </main>
 
-  <footer>&copy; 2026 Droid</footer>
+  <footer>&copy; 2026 Alakazam</footer>
 
   <div class="mode-toggle">
     <button class="mode-btn active" id="btn-human" onclick="switchMode('human')">
@@ -688,7 +688,7 @@
       document.getElementById('btn-agent').classList.toggle('active', isAgent);
 
       if (isAgent) {
-        document.getElementById('title-hatched').textContent = '$ droid create';
+        document.getElementById('title-hatched').textContent = '$ alakazam create';
         document.getElementById('title-solid').textContent = '';
         document.getElementById('hero-sub').textContent = 'POST /identities — one call, one token, one identity. Scroll down for the full API reference.';
         document.getElementById('hero-eyebrow').textContent = 'API v1 · REST · No SDK required';
@@ -698,10 +698,10 @@
       } else {
         document.getElementById('title-hatched').textContent = 'AGENT IDENTITY';
         document.getElementById('title-solid').textContent = 'FOR THE REAL WORLD';
-        document.getElementById('hero-sub').textContent = 'Your agent needs a name, an email, and a phone number to exist on the internet. Droid creates all three in one API call.';
+        document.getElementById('hero-sub').textContent = 'Your agent needs a name, an email, and a phone number to exist on the internet. Alakazam creates all three in one API call.';
         document.getElementById('hero-eyebrow').textContent = 'Agent Infrastructure';
         document.getElementById('cta-title').innerHTML = 'Give your agent<br>an identity.';
-        document.getElementById('cta-desc').textContent = 'Droid is in beta. Get early access and start building agents that interact with the real world.';
+        document.getElementById('cta-desc').textContent = 'Alakazam is in beta. Get early access and start building agents that interact with the real world.';
         document.getElementById('docs-btn').textContent = 'How it works';
       }
     }
