@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Droid — Agent Identity for the Real World</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -92,20 +95,51 @@
     body.agent-mode .eyebrow { color: var(--amber-dim); }
 
     h1 {
-      font-size: clamp(38px, 6vw, 92px);
-      font-weight: 800;
-      line-height: 0.96;
-      letter-spacing: -3px;
+      font-size: clamp(48px, 8vw, 120px);
+      font-family: "Bebas Neue", "Arial Black", sans-serif;
+      font-weight: 400;
+      line-height: 0.92;
+      letter-spacing: 1px;
       max-width: 900px;
-      color: #0a0a0a;
       margin-bottom: 28px;
-      transition: color 0.4s, font-family 0.3s, letter-spacing 0.3s;
+      transition: font-family 0.3s;
+    }
+    /* "AGENT IDENTITY" — hatched lines inside letters */
+    .title-hatched {
+      display: block;
+      background: repeating-linear-gradient(
+        90deg,
+        #0a0a0a 0px,
+        #0a0a0a 4px,
+        #f8f7f4 4px,
+        #f8f7f4 14px
+      );
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      transition: background 0.4s;
+    }
+    /* "FOR THE REAL WORLD" — solid black below */
+    .title-solid {
+      display: block;
+      color: #0a0a0a;
+      font-size: 0.72em;
+      letter-spacing: 2px;
+      transition: color 0.4s;
     }
     body.agent-mode h1 {
-      color: var(--amber);
       font-family: "SF Mono", monospace;
       font-size: clamp(24px, 3.5vw, 52px);
       letter-spacing: -1px;
+    }
+    body.agent-mode .title-hatched {
+      background: none;
+      -webkit-text-fill-color: var(--amber);
+      color: var(--amber);
+    }
+    body.agent-mode .title-solid {
+      color: var(--amber-dim);
+      font-size: 0.6em;
     }
 
     .hero-sub {
@@ -393,7 +427,10 @@
     <div class="hero">
       <div class="eyebrow" id="hero-eyebrow">Agent Infrastructure</div>
 
-      <h1 id="hero-title">AGENT IDENTITY<br>FOR THE REAL WORLD</h1>
+      <h1 id="hero-title">
+        <span class="title-hatched" id="title-hatched">AGENT IDENTITY</span>
+        <span class="title-solid" id="title-solid">FOR THE REAL WORLD</span>
+      </h1>
 
       <p class="hero-sub" id="hero-sub">
         Your agent needs a name, an email, and a phone number to exist on the internet. Droid creates all three in one API call.
@@ -659,14 +696,16 @@
       document.getElementById('btn-agent').classList.toggle('active', isAgent);
 
       if (isAgent) {
-        document.getElementById('hero-title').innerHTML = '$ droid create';
+        document.getElementById('title-hatched').textContent = '$ droid create';
+        document.getElementById('title-solid').textContent = '';
         document.getElementById('hero-sub').textContent = 'POST /identities — one call, one token, one identity. Scroll down for the full API reference.';
         document.getElementById('hero-eyebrow').textContent = 'API v1 · REST · No SDK required';
         document.getElementById('cta-title').innerHTML = 'Ready to integrate?';
         document.getElementById('cta-desc').textContent = 'POST /identities → store your token → GET /inbox or /sms. Full reference above.';
         document.getElementById('docs-btn').textContent = 'API Reference';
       } else {
-        document.getElementById('hero-title').innerHTML = 'AGENT IDENTITY<br>FOR THE REAL WORLD';
+        document.getElementById('title-hatched').textContent = 'AGENT IDENTITY';
+        document.getElementById('title-solid').textContent = 'FOR THE REAL WORLD';
         document.getElementById('hero-sub').textContent = 'Your agent needs a name, an email, and a phone number to exist on the internet. Droid creates all three in one API call.';
         document.getElementById('hero-eyebrow').textContent = 'Agent Infrastructure';
         document.getElementById('cta-title').innerHTML = 'Give your agent<br>an identity.';
