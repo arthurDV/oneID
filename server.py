@@ -1,53 +1,25 @@
 """
-Agent Identity API — MVP v5
-Donne une vraie identité à un agent en un seul appel.
-Email (MailSlurp) + Téléphone (Twilio) + Nom généré.
+Droid — Agent Identity API
+Give any AI agent a real identity in one API call.
+Email (MailSlurp) + Phone (Twilio) + Generated name.
 
-Endpoints :
-  POST /identities               → créer une identité complète
-  GET  /identities               → lister les identités
-  GET  /identities/<id>/inbox    → lire les emails reçus
-  GET  /identities/<id>/sms      → lire les SMS reçus
-  GET  /identities/<id>/verification-code → lire le code de vérification
+Endpoints:
+  POST /identities            → create an identity
+  GET  /identities            → list all identities
+  GET  /identities/<id>/inbox → read all received emails (full body)
+  GET  /identities/<id>/sms   → read all received SMS
 """
 
 import json
 import uuid
 import os
-import re
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from datetime import datetime
 
 from names import generate_name
 from config import MAILSLURP_API_KEY, TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN
-from providers.email import create_inbox, get_emails, get_email_body
+from providers.email import create_inbox, get_emails
 from providers.sms import buy_phone_number, get_sms_messages
-
-
-def extract_code(text):
-    """
-    Cherche un code de vérification dans un texte.
-    Couvre les patterns les plus courants : 4, 6, 8 chiffres.
-    """
-    # Patterns avec contexte explicite (priorité haute)
-    contextual = re.findall(
-        r'(?:code|verify|verification|confirm|otp|token)[^\d]{0,20}(\d{4,8})',
-        text, re.IGNORECASE
-    )
-    if contextual:
-        return contextual[0]
-
-    # Codes 6 chiffres isolés (le plus courant)
-    codes_6 = re.findall(r'\b(\d{6})\b', text)
-    if codes_6:
-        return codes_6[0]
-
-    # Codes 4 chiffres isolés
-    codes_4 = re.findall(r'\b(\d{4})\b', text)
-    if codes_4:
-        return codes_4[0]
-
-    return None
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 IDENTITIES_FILE = os.path.join(DATA_DIR, "identities.json")
@@ -115,7 +87,7 @@ class AgentIdentityHandler(BaseHTTPRequestHandler):
             self._send_json(200, {"identities": list(identities.values())})
             return
 
-        # GET /identities/<id>/inbox  — emails
+        # GET /identities/<id>/inbox — full email content
         if self.path.startswith("/identities/") and self.path.endswith("/inbox"):
             identity_id = self.path.split("/")[2]
             identities = load_identities()
@@ -128,7 +100,7 @@ class AgentIdentityHandler(BaseHTTPRequestHandler):
             inbox_id = identity.get("inbox_id")
 
             if not inbox_id:
-                self._send_json(400, {"error": "No email inbox linked to this identity"})
+                self._send_json(400, {"error": "No email inbox linked"})
                 return
 
             try:
@@ -145,64 +117,7 @@ class AgentIdentityHandler(BaseHTTPRequestHandler):
                 self._send_json(500, {"error": str(e)})
             return
 
-        # GET /identities/<id>/verification-code
-        if self.path.startswith("/identities/") and self.path.endswith("/verification-code"):
-            identity_id = self.path.split("/")[2]
-            identities = load_identities()
-
-            if identity_id not in identities:
-                self._send_json(404, {"error": "Identity not found"})
-                return
-
-            identity = identities[identity_id]
-            candidates = []
-
-            try:
-                # Cherche dans les emails
-                inbox_id = identity.get("inbox_id")
-                if inbox_id:
-                    emails = get_emails(MAILSLURP_API_KEY, inbox_id)
-                    for email in emails:
-                        body = get_email_body(MAILSLURP_API_KEY, email["id"])
-                        full_text = f"{email.get('subject', '')} {body}"
-                        code = extract_code(full_text)
-                        if code:
-                            candidates.append({
-                                "code": code,
-                                "from": email.get("from"),
-                                "channel": "email",
-                                "subject": email.get("subject"),
-                                "received_at": email.get("received_at"),
-                            })
-
-                # Cherche dans les SMS
-                phone = identity.get("phone")
-                if phone and TWILIO_READY:
-                    sms_list = get_sms_messages(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, phone)
-                    for sms in sms_list:
-                        code = extract_code(sms.get("body", ""))
-                        if code:
-                            candidates.append({
-                                "code": code,
-                                "from": sms.get("from"),
-                                "channel": "sms",
-                                "subject": None,
-                                "received_at": sms.get("received_at"),
-                            })
-
-                if not candidates:
-                    self._send_json(404, {"error": "No verification code found"})
-                    return
-
-                # Retourne le plus récent
-                candidates.sort(key=lambda x: x.get("received_at") or "", reverse=True)
-                self._send_json(200, candidates[0])
-
-            except Exception as e:
-                self._send_json(500, {"error": str(e)})
-            return
-
-        # GET /identities/<id>/sms  — SMS
+        # GET /identities/<id>/sms — full SMS content
         if self.path.startswith("/identities/") and self.path.endswith("/sms"):
             identity_id = self.path.split("/")[2]
             identities = load_identities()
@@ -215,7 +130,7 @@ class AgentIdentityHandler(BaseHTTPRequestHandler):
             phone = identity.get("phone")
 
             if not phone:
-                self._send_json(400, {"error": "No phone number linked to this identity"})
+                self._send_json(400, {"error": "No phone number linked"})
                 return
 
             try:
@@ -243,11 +158,9 @@ class AgentIdentityHandler(BaseHTTPRequestHandler):
             try:
                 first_name, last_name = generate_name()
 
-                # Email (MailSlurp)
                 print(f"  → Email pour {first_name} {last_name}...")
                 inbox = create_inbox(MAILSLURP_API_KEY, first_name, last_name)
 
-                # Téléphone (Twilio — si configuré)
                 phone = None
                 phone_sid = None
                 if TWILIO_READY:
@@ -276,7 +189,7 @@ class AgentIdentityHandler(BaseHTTPRequestHandler):
                 identities[identity_id] = identity
                 save_identities(identities)
 
-                print(f"  ✅ {first_name} {last_name} — {inbox['email']} | {phone or 'pas de téléphone'}")
+                print(f"  ✅ {first_name} {last_name} — {inbox['email']} | {phone or 'no phone'}")
                 self._send_json(201, identity)
 
             except Exception as e:
@@ -293,26 +206,24 @@ class AgentIdentityHandler(BaseHTTPRequestHandler):
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8888))
-    host = "0.0.0.0"
-    server = HTTPServer((host, port), AgentIdentityHandler)
+    server = HTTPServer(("0.0.0.0", port), AgentIdentityHandler)
     print(f"""
 ╔══════════════════════════════════════════╗
 ║     Droid — Agent Identity API           ║
 ║                                          ║
 ║  🚀 http://localhost:{port}                ║
 ║                                          ║
-║  POST /identities                → créer ║
-║  GET  /identities                → lister║
-║  GET  /identities/:id/inbox      → emails║
-║  GET  /identities/:id/sms        → SMS   ║
-║  GET  /identities/:id/verification-code  ║
+║  POST /identities            → create    ║
+║  GET  /identities            → list      ║
+║  GET  /identities/:id/inbox  → emails    ║
+║  GET  /identities/:id/sms    → SMS       ║
 ║                                          ║
-║  Email  : {"✅ MailSlurp" if MAILSLURP_API_KEY != "COLLE_TA_CLE_MAILSLURP_ICI" else "⚠️  non configuré"}              ║
-║  Téléphone : {"✅ Twilio  " if TWILIO_READY else "⚠️  non configuré"}              ║
+║  Email : {"✅ MailSlurp" if MAILSLURP_API_KEY != "COLLE_TA_CLE_MAILSLURP_ICI" else "⚠️  not configured"}               ║
+║  Phone : {"✅ Twilio  " if TWILIO_READY else "⚠️  not configured"}               ║
 ╚══════════════════════════════════════════╝
 """)
     try:
         server.serve_forever()
     except KeyboardInterrupt:
-        print("\n👋 Serveur arrêté.")
+        print("\n👋 Server stopped.")
         server.server_close()

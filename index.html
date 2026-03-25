@@ -440,23 +440,28 @@
             <span class="t-dot t-red"></span>
             <span class="t-dot t-yellow"></span>
             <span class="t-dot t-green"></span>
-            <span class="terminal-title">droid — python3</span>
+            <span class="terminal-title">droid — api</span>
           </div>
           <div class="terminal-body">
-<span class="t-prompt">$ </span><span class="t-cmd">pip install droid</span>
-<span class="t-out">Successfully installed droid-1.0.0</span>
-
-<span class="t-prompt">$ </span><span class="t-cmd">python3</span>
-<span class="t-prompt">&gt;&gt;&gt; </span><span class="t-cmd">from droid import create</span>
-<span class="t-prompt">&gt;&gt;&gt; </span><span class="t-cmd">agent = create()</span>
+<span class="t-comment"># create an identity</span>
+<span class="t-prompt">$ </span><span class="t-cmd">curl -X POST https://api.droid.dev/identities</span>
 <span class="t-out">{</span>
+<span class="t-out">  <span class="t-key">"id"</span>:    <span class="t-str">"a1b2c3d4"</span>,</span>
 <span class="t-out">  <span class="t-key">"name"</span>:  <span class="t-str">"Sophie Baker"</span>,</span>
 <span class="t-out">  <span class="t-key">"email"</span>: <span class="t-str">"sophie.baker@droid.io"</span>,</span>
 <span class="t-out">  <span class="t-key">"phone"</span>: <span class="t-str">"+1 361 322 2054"</span></span>
 <span class="t-out">}</span>
-<span class="t-prompt">&gt;&gt;&gt; </span><span class="t-cmd">agent.code()</span>
-<span class="t-out"><span class="t-val">"482910"</span>  <span class="t-comment"># verification code received</span></span>
-<span class="t-prompt">&gt;&gt;&gt; </span><span class="t-cursor"></span>
+
+<span class="t-comment"># read incoming emails</span>
+<span class="t-prompt">$ </span><span class="t-cmd">curl https://api.droid.dev/identities/a1b2c3d4/inbox</span>
+<span class="t-out">{</span>
+<span class="t-out">  <span class="t-key">"emails"</span>: [</span>
+<span class="t-out">    { <span class="t-key">"from"</span>: <span class="t-str">"noreply@twitter.com"</span>,</span>
+<span class="t-out">      <span class="t-key">"subject"</span>: <span class="t-str">"Verify your email"</span>,</span>
+<span class="t-out">      <span class="t-key">"body"</span>: <span class="t-str">"Your code is 482910"</span> }</span>
+<span class="t-out">  ]</span>
+<span class="t-out">}</span>
+<span class="t-prompt">$ </span><span class="t-cursor"></span>
           </div>
         </div>
       </div>
@@ -485,8 +490,8 @@
           <div class="card-icon icon-cyan">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#67e8f9" stroke-width="2" stroke-linecap="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
           </div>
-          <div class="card-title">Never gets stuck</div>
-          <div class="card-desc">Verification codes, confirmation emails — handled automatically. Your agent keeps moving.</div>
+          <div class="card-title">Full inbox access</div>
+          <div class="card-desc">Every email, every SMS — your agent reads it all and decides what to do next. No human needed.</div>
         </div>
       </div>
     </section>
@@ -560,7 +565,7 @@
         btnA.classList.add('active');
         btnH.classList.remove('active');
         title.innerHTML = '$ droid create';
-        sub.textContent = 'pip install droid — then call create(). Your agent gets a real name, email, and phone. Read verification codes with agent.code().';
+        sub.textContent = 'POST /identities — one call, one identity. Your agent gets a real name, email, and phone. Read the inbox anytime.';
       }
     }
   </script>

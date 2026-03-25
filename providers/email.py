@@ -45,7 +45,7 @@ def create_inbox(api_key, first_name, last_name):
 def get_emails(api_key, inbox_id):
     """
     Lit les emails reçus dans la boîte de l'agent.
-    Retourne une liste de messages.
+    Retourne une liste de messages avec le corps complet.
     """
     url = f"{MAILSLURP_BASE}/inboxes/{inbox_id}/emails"
     req = urllib.request.Request(
@@ -56,15 +56,18 @@ def get_emails(api_key, inbox_id):
 
     with urllib.request.urlopen(req) as resp:
         emails = json.loads(resp.read())
-        return [
-            {
-                "id": e.get("id"),
-                "from": e.get("from"),
-                "subject": e.get("subject"),
-                "received_at": e.get("createdAt"),
-            }
-            for e in emails
-        ]
+
+    results = []
+    for e in emails:
+        body = get_email_body(api_key, e.get("id"))
+        results.append({
+            "id": e.get("id"),
+            "from": e.get("from"),
+            "subject": e.get("subject"),
+            "body": body,
+            "received_at": e.get("createdAt"),
+        })
+    return results
 
 
 def get_email_body(api_key, email_id):
