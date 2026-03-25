@@ -443,21 +443,17 @@
             <span class="terminal-title">droid — api</span>
           </div>
           <div class="terminal-body">
-<span class="t-comment"># get your token</span>
-<span class="t-prompt">$ </span><span class="t-cmd">curl -X POST https://api.droid.dev/auth/register</span>
-<span class="t-out">{ <span class="t-key">"token"</span>: <span class="t-str">"eyJhbG...your_jwt"</span> }</span>
-
 <span class="t-comment"># create an identity</span>
-<span class="t-prompt">$ </span><span class="t-cmd">curl -X POST https://api.droid.dev/identities \</span>
-<span class="t-cmd">    -H "Authorization: Bearer eyJhbG..."</span>
+<span class="t-prompt">$ </span><span class="t-cmd">curl -X POST https://api.droid.dev/identities</span>
 <span class="t-out">{</span>
+<span class="t-out">  <span class="t-key">"token"</span>: <span class="t-str">"eyJhbG...your_jwt"</span>,</span>
 <span class="t-out">  <span class="t-key">"name"</span>:  <span class="t-str">"Sophie Baker"</span>,</span>
 <span class="t-out">  <span class="t-key">"email"</span>: <span class="t-str">"sophie.baker@droid.io"</span>,</span>
 <span class="t-out">  <span class="t-key">"phone"</span>: <span class="t-str">"+1 361 322 2054"</span></span>
 <span class="t-out">}</span>
 
 <span class="t-comment"># read the inbox</span>
-<span class="t-prompt">$ </span><span class="t-cmd">curl https://api.droid.dev/identities/a1b2c3/inbox \</span>
+<span class="t-prompt">$ </span><span class="t-cmd">curl https://api.droid.dev/inbox \</span>
 <span class="t-cmd">    -H "Authorization: Bearer eyJhbG..."</span>
 <span class="t-out">{ <span class="t-key">"emails"</span>: [{ <span class="t-key">"body"</span>: <span class="t-str">"Your code is 482910"</span> }] }</span>
 <span class="t-prompt">$ </span><span class="t-cursor"></span>
@@ -564,7 +560,7 @@
         btnA.classList.add('active');
         btnH.classList.remove('active');
         title.innerHTML = '$ droid create';
-        sub.textContent = 'POST /auth/register → get a token. POST /identities → get a real identity. GET /inbox → read everything.';
+        sub.textContent = 'POST /identities → one token, one identity. GET /inbox → read everything. That\\'s it.';
       }
     }
   </script>
