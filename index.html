@@ -3,460 +3,356 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Droid — Agent Identity Infrastructure</title>
+  <title>Droid — Agent Identity for the Real World</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    /* ─── HUMAN MODE (default) — minimal, black/white, MPP-inspired ─── */
+    :root {
+      --amber: #d4a66a;
+      --amber-dim: rgba(212,166,106,0.4);
+      --amber-faint: rgba(212,166,106,0.12);
+    }
+
     body {
-      background: #f0ede8;
-      color: #0a0a0a;
+      background: #07070f;
+      color: #fff;
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
       min-height: 100vh;
       overflow-x: hidden;
-      transition: background 0.5s, color 0.5s;
+      transition: background 0.4s, color 0.4s;
     }
 
-    /* NAV */
+    /* ─── AGENT MODE ─── */
+    body.agent-mode {
+      background: #080706;
+      color: var(--amber);
+      font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+    }
+
+    /* ─── NAV ─── */
     nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 20px 48px;
-      background: rgba(240,237,232,0.85);
+      padding: 22px 48px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
       backdrop-filter: blur(20px);
-      border-bottom: 1px solid rgba(0,0,0,0.08);
-      transition: background 0.5s, border-color 0.5s;
+      background: rgba(7,7,15,0.7);
+      transition: all 0.4s;
+    }
+    body.agent-mode nav {
+      background: rgba(8,7,6,0.9);
+      border-bottom-color: var(--amber-faint);
     }
     .logo {
-      font-size: 18px; font-weight: 800; letter-spacing: -0.5px;
-      color: #0a0a0a; transition: color 0.4s;
+      font-size: 15px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+      transition: color 0.4s;
     }
+    body.agent-mode .logo { color: var(--amber); }
+    .nav-right { display: flex; align-items: center; gap: 24px; }
+    .nav-link {
+      font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.4);
+      text-decoration: none; letter-spacing: 0.3px;
+      transition: color 0.2s;
+    }
+    .nav-link:hover { color: rgba(255,255,255,0.8); }
+    body.agent-mode .nav-link { color: var(--amber-dim); }
+    body.agent-mode .nav-link:hover { color: var(--amber); }
     .nav-cta {
-      padding: 9px 22px; border-radius: 6px;
-      background: #0a0a0a; color: #f0ede8;
+      padding: 8px 20px; border-radius: 6px;
+      background: #fff; color: #000;
       font-size: 13px; font-weight: 600;
       cursor: pointer; text-decoration: none;
-      border: 1px solid #0a0a0a;
-      transition: background 0.2s, color 0.4s, border-color 0.4s;
+      transition: background 0.2s, color 0.4s;
     }
-    .nav-cta:hover { background: #333; border-color: #333; }
+    .nav-cta:hover { background: rgba(255,255,255,0.85); }
+    body.agent-mode .nav-cta {
+      background: transparent;
+      border: 1px solid var(--amber-faint);
+      color: var(--amber);
+    }
 
     main { position: relative; z-index: 1; }
 
-    /* ─── HERO (human) ─── */
+    /* ─── HERO ─── */
     .hero {
       min-height: 100vh;
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
       text-align: center;
-      padding: 140px 24px 120px;
+      padding: 140px 24px 100px;
     }
 
-    .badge {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 5px 14px; border-radius: 4px;
-      background: transparent; border: 1px solid rgba(0,0,0,0.18);
-      font-size: 11px; font-weight: 700; letter-spacing: 1.2px;
-      text-transform: uppercase; color: rgba(0,0,0,0.45);
-      margin-bottom: 40px;
-      transition: border-color 0.4s, color 0.4s, background 0.4s;
-    }
-    .badge-dot {
-      width: 6px; height: 6px; border-radius: 50%;
-      background: #0a0a0a; animation: pulse 2s ease-in-out infinite;
-      transition: background 0.4s;
-    }
-    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
-
-    /* Hatched title — MPP style */
-    h1 {
-      font-size: clamp(52px, 8vw, 110px);
-      font-weight: 900;
-      line-height: 0.95;
-      letter-spacing: -4px;
-      max-width: 900px;
-      color: #0a0a0a;
+    .eyebrow {
+      font-size: 11px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase;
+      color: rgba(255,255,255,0.25);
       margin-bottom: 28px;
-      position: relative;
-      transition: color 0.4s, font-size 0.3s;
+      transition: color 0.4s;
     }
-    .h1-hatch {
-      position: relative;
-      display: inline-block;
-      color: transparent;
-      -webkit-text-stroke: 2px #0a0a0a;
+    body.agent-mode .eyebrow { color: var(--amber-dim); }
+
+    h1 {
+      font-size: clamp(38px, 6vw, 88px);
+      font-weight: 800;
+      line-height: 1.0;
+      letter-spacing: -2px;
+      max-width: 900px;
+      color: #fff;
+      margin-bottom: 28px;
+      transition: color 0.4s, font-family 0.3s;
+    }
+    body.agent-mode h1 {
+      color: var(--amber);
+      font-family: "SF Mono", monospace;
+      font-size: clamp(24px, 3.5vw, 52px);
+      letter-spacing: -1px;
     }
 
     .hero-sub {
-      font-size: clamp(15px, 1.6vw, 18px);
-      color: rgba(0,0,0,0.45);
-      max-width: 440px; line-height: 1.65;
-      font-weight: 400;
+      font-size: 18px;
+      color: rgba(255,255,255,0.38);
+      max-width: 500px; line-height: 1.7;
       margin-bottom: 44px;
-      transition: color 0.4s;
+      transition: color 0.4s, font-size 0.3s;
+    }
+    body.agent-mode .hero-sub {
+      font-size: 13px;
+      color: var(--amber-dim);
+      max-width: 560px;
     }
 
-    .hero-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 64px; }
+    .hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 64px; }
 
     .btn-primary {
-      padding: 13px 28px; border-radius: 6px;
-      background: #0a0a0a; color: #f0ede8;
-      font-size: 14px; font-weight: 700;
-      border: 1px solid #0a0a0a; cursor: pointer; text-decoration: none;
-      transition: background 0.2s, color 0.4s, border-color 0.4s;
-      letter-spacing: 0.2px;
-    }
-    .btn-primary:hover { background: #333; border-color: #333; }
-    .btn-secondary {
-      padding: 13px 28px; border-radius: 6px;
-      background: transparent;
-      border: 1px solid rgba(0,0,0,0.2);
-      color: rgba(0,0,0,0.55);
+      padding: 13px 32px; border-radius: 6px;
+      background: #fff; color: #000;
       font-size: 14px; font-weight: 600;
-      cursor: pointer; text-decoration: none;
-      transition: background 0.2s, border-color 0.4s, color 0.4s;
+      border: none; cursor: pointer; text-decoration: none;
+      transition: background 0.2s, color 0.4s;
     }
-    .btn-secondary:hover { background: rgba(0,0,0,0.05); border-color: rgba(0,0,0,0.35); }
+    .btn-primary:hover { background: rgba(255,255,255,0.85); }
+    body.agent-mode .btn-primary {
+      background: transparent;
+      border: 1px solid rgba(212,166,106,0.3);
+      color: var(--amber);
+    }
+    .btn-secondary {
+      padding: 13px 32px; border-radius: 6px;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.14);
+      color: rgba(255,255,255,0.55);
+      font-size: 14px; font-weight: 500;
+      cursor: pointer; text-decoration: none;
+      transition: border-color 0.2s, color 0.4s;
+    }
+    .btn-secondary:hover { border-color: rgba(255,255,255,0.28); color: rgba(255,255,255,0.8); }
+    body.agent-mode .btn-secondary {
+      border-color: var(--amber-faint);
+      color: var(--amber-dim);
+    }
 
-    /* ─── HERO CARDS ─── */
-    .hero-card { max-width: 580px; width: 100%; text-align: left; }
+    /* ─── HERO CARD ─── */
+    .hero-card { max-width: 660px; width: 100%; text-align: left; }
     .hero-card.hidden { display: none; }
 
-    /* Human identity card */
+    /* Human card */
     .human-card {
-      background: #fff;
-      border: 1px solid rgba(0,0,0,0.10);
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
       border-radius: 16px;
-      box-shadow: 0 4px 40px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04);
       padding: 40px 44px;
     }
-    .identity-name { font-size: 26px; font-weight: 800; letter-spacing: -0.8px; margin-bottom: 28px; color: #0a0a0a; }
+    .identity-name { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 28px; }
     .human-row {
-      display: flex; align-items: center; gap: 14px;
+      display: flex; align-items: center; gap: 16px;
       padding: 14px 0;
-      border-bottom: 1px solid rgba(0,0,0,0.06);
-      font-size: 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      font-size: 15px;
     }
     .human-row:last-of-type { border-bottom: none; }
-    .human-icon {
-      width: 34px; height: 34px; border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      background: rgba(0,0,0,0.05);
+    .human-icon { width: 36px; height: 36px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 16px; background: rgba(255,255,255,0.06); }
+    .human-label { color: rgba(255,255,255,0.28); min-width: 60px; font-size: 13px; }
+    .human-value { color: rgba(255,255,255,0.78); }
+    .status-pill {
+      display: inline-flex; align-items: center; gap: 7px;
+      margin-top: 20px;
+      font-size: 12px; font-weight: 600; letter-spacing: 0.3px;
+      color: rgba(255,255,255,0.35);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 6px 14px; border-radius: 100px;
     }
-    .human-label { color: rgba(0,0,0,0.35); min-width: 60px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-    .human-value { color: #0a0a0a; font-weight: 500; }
-    .human-tag {
-      display: inline-flex; align-items: center; gap: 7px; margin-top: 24px;
-      font-size: 11px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase;
-      color: rgba(0,0,0,0.4);
-      border: 1px solid rgba(0,0,0,0.12);
-      padding: 6px 14px; border-radius: 4px;
-    }
-    .human-tag-dot { width: 5px; height: 5px; border-radius: 50%; background: #0a0a0a; opacity: 0.5; }
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 8px #4ade80; animation: pulse 2s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
-    /* ─── AGENT / TERMINAL CARD ─── */
+    /* Terminal card */
     .terminal-card {
       background: #0c0a08;
-      border: 1px solid rgba(212,166,106,0.15);
+      border: 1px solid rgba(212,166,106,0.12);
       border-radius: 12px;
-      box-shadow: 0 0 60px rgba(212,166,106,0.05), 0 24px 64px rgba(0,0,0,0.6);
       overflow: hidden;
+      box-shadow: 0 0 60px rgba(212,166,106,0.04), 0 24px 64px rgba(0,0,0,0.7);
     }
     .terminal-bar {
       display: flex; align-items: center; gap: 7px;
-      padding: 11px 16px;
-      background: rgba(0,0,0,0.4);
-      border-bottom: 1px solid rgba(212,166,106,0.08);
+      padding: 12px 16px;
+      background: #111;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
     }
-    .t-dot { width: 11px; height: 11px; border-radius: 50%; }
+    .t-dot { width: 12px; height: 12px; border-radius: 50%; }
     .t-red { background: #ff5f57; } .t-yellow { background: #febc2e; } .t-green { background: #28c840; }
-    .terminal-title { flex: 1; text-align: center; font-size: 11px; color: rgba(212,166,106,0.3); font-family: "SF Mono", monospace; letter-spacing: 0.5px; }
-    .terminal-body { padding: 24px 28px; font-family: "SF Mono", "Fira Code", "Consolas", monospace; font-size: 13px; line-height: 1.9; }
+    .terminal-title { flex: 1; text-align: center; font-size: 12px; color: rgba(255,255,255,0.28); font-family: "SF Mono", monospace; }
+    .terminal-body { padding: 28px 32px; font-family: "SF Mono", "Fira Code", monospace; font-size: 13px; line-height: 1.9; }
     .t-prompt { color: rgba(212,166,106,0.35); }
-    .t-cmd    { color: rgba(255,255,255,0.85); }
+    .t-cmd    { color: rgba(255,255,255,0.8); }
     .t-out    { color: rgba(212,166,106,0.6); }
     .t-key    { color: #d4a66a; }
     .t-str    { color: #c9956b; }
     .t-comment{ color: rgba(212,166,106,0.22); font-style: italic; }
     .t-cursor { display: inline-block; width: 8px; height: 13px; background: #d4a66a; margin-left: 2px; vertical-align: middle; animation: blink 1.1s step-end infinite; }
-    @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0; } }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
 
-    /* ─── SECTIONS (human) ─── */
+    /* ─── SECTIONS ─── */
     section {
       padding: 100px 24px;
-      max-width: 1060px;
+      max-width: 1040px;
       margin: 0 auto;
     }
-    .section-label {
-      font-size: 10px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;
-      color: rgba(0,0,0,0.3); text-align: center; margin-bottom: 16px;
+
+    .section-eyebrow {
+      font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+      color: rgba(255,255,255,0.22); text-align: center; margin-bottom: 16px;
       transition: color 0.4s;
     }
+    body.agent-mode .section-eyebrow { color: var(--amber-dim); }
+
     .section-title {
-      font-size: clamp(30px, 4vw, 52px);
-      font-weight: 900; letter-spacing: -2px;
-      text-align: center; margin-bottom: 56px;
-      color: #0a0a0a;
+      font-size: clamp(28px, 3.5vw, 44px);
+      font-weight: 700; letter-spacing: -1px;
+      text-align: center; margin-bottom: 56px; color: #fff;
       transition: color 0.4s;
     }
+    body.agent-mode .section-title { color: var(--amber); }
 
-    /* Feature grid */
-    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 2px; }
-    .feature-card {
-      background: #fff;
-      border: 1px solid rgba(0,0,0,0.07);
-      padding: 36px 32px;
-      transition: background 0.2s;
+    /* Features grid */
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 1px; background: rgba(255,255,255,0.06); border-radius: 16px; overflow: hidden; }
+    .feat-card {
+      background: #0d0d17; padding: 36px 32px;
+      transition: background 0.3s;
     }
-    .feature-card:first-child { border-radius: 12px 0 0 12px; }
-    .feature-card:last-child  { border-radius: 0 12px 12px 0; }
-    @media (max-width: 680px) {
-      .feature-card:first-child { border-radius: 12px 12px 0 0; }
-      .feature-card:last-child  { border-radius: 0 0 12px 12px; }
-    }
-    .feature-card:hover { background: #fafafa; }
-    .card-num { font-size: 11px; font-weight: 800; letter-spacing: 1px; color: rgba(0,0,0,0.2); margin-bottom: 18px; }
-    .card-title { font-size: 18px; font-weight: 800; letter-spacing: -0.4px; margin-bottom: 10px; color: #0a0a0a; transition: color 0.4s; }
-    .card-desc  { font-size: 14px; color: rgba(0,0,0,0.45); line-height: 1.7; transition: color 0.4s; }
+    .feat-card:hover { background: rgba(255,255,255,0.03); }
+    .feat-icon { font-size: 22px; margin-bottom: 18px; }
+    .feat-title { font-size: 16px; font-weight: 650; letter-spacing: -0.2px; margin-bottom: 8px; color: #fff; }
+    .feat-desc { font-size: 14px; color: rgba(255,255,255,0.35); line-height: 1.7; }
 
-    /* Steps */
-    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 2px; }
-    .step {
-      padding: 38px 32px;
-      background: #fff; border: 1px solid rgba(0,0,0,0.07);
+    /* How it works */
+    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1px; background: rgba(255,255,255,0.06); border-radius: 16px; overflow: hidden; }
+    .step { padding: 36px 32px; background: #0d0d17; }
+    .step-num { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.18); margin-bottom: 14px; letter-spacing: 1px; }
+    .step-title { font-size: 16px; font-weight: 650; margin-bottom: 8px; color: #fff; }
+    .step-desc { font-size: 13px; color: rgba(255,255,255,0.35); line-height: 1.7; }
+
+    /* ─── AGENT DOCS SECTION ─── */
+    .docs-section { display: none; }
+    body.agent-mode .docs-section { display: block; }
+    body.agent-mode .human-section { display: none; }
+
+    .docs-block {
+      background: #0c0a08;
+      border: 1px solid var(--amber-faint);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .docs-block-header {
+      padding: 18px 28px;
+      border-bottom: 1px solid var(--amber-faint);
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    }
+    .method-badge {
+      font-family: "SF Mono", monospace;
+      font-size: 11px; font-weight: 700;
+      padding: 3px 10px; border-radius: 4px;
+      letter-spacing: 0.5px;
+    }
+    .method-post { background: rgba(212,166,106,0.15); color: #d4a66a; border: 1px solid rgba(212,166,106,0.25); }
+    .method-get  { background: rgba(100,180,255,0.10); color: #88c0f8; border: 1px solid rgba(100,180,255,0.2); }
+    .method-err  { background: rgba(255,80,80,0.10); color: #ff8080; border: 1px solid rgba(255,80,80,0.2); }
+    .endpoint-path { font-family: "SF Mono", monospace; font-size: 14px; color: rgba(255,255,255,0.75); }
+    .endpoint-desc { font-size: 13px; color: var(--amber-dim); margin-left: auto; }
+    .docs-block-body { padding: 24px 28px; }
+    .docs-block-body pre {
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 12.5px; line-height: 1.85;
+      color: rgba(212,166,106,0.65);
+      white-space: pre-wrap; word-break: break-all;
+    }
+    .pre-label {
+      font-size: 10px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
+      color: rgba(212,166,106,0.25); margin-bottom: 10px;
+    }
+    .pre-section { margin-bottom: 20px; }
+    .pre-section:last-child { margin-bottom: 0; }
+    .hl-key  { color: #d4a66a; }
+    .hl-str  { color: #c9956b; }
+    .hl-comment { color: rgba(212,166,106,0.22); font-style: italic; }
+
+    .docs-note {
+      font-family: "SF Mono", monospace;
+      font-size: 12px; color: var(--amber-dim);
+      background: rgba(212,166,106,0.04);
+      border: 1px solid var(--amber-faint);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-top: 20px;
+      line-height: 1.7;
+    }
+
+    /* ─── CTA ─── */
+    .cta-section { text-align: center; padding: 60px 24px 140px; }
+    .cta-inner {
+      max-width: 580px; margin: 0 auto;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 56px 48px;
       transition: background 0.4s, border-color 0.4s;
     }
-    .step:first-child { border-radius: 12px 0 0 12px; }
-    .step:last-child  { border-radius: 0 12px 12px 0; }
-    @media (max-width: 680px) {
-      .step:first-child { border-radius: 12px 12px 0 0; }
-      .step:last-child  { border-radius: 0 0 12px 12px; }
+    body.agent-mode .cta-inner {
+      background: rgba(0,0,0,0.4);
+      border-color: var(--amber-faint);
     }
-    .step-num   { font-size: 11px; font-weight: 800; color: rgba(0,0,0,0.2); margin-bottom: 16px; letter-spacing: 1px; transition: color 0.4s; }
-    .step-title { font-size: 17px; font-weight: 800; letter-spacing: -0.3px; margin-bottom: 10px; color: #0a0a0a; transition: color 0.4s; }
-    .step-desc  { font-size: 13px; color: rgba(0,0,0,0.4); line-height: 1.7; transition: color 0.4s; }
-
-    /* CTA */
-    .cta-section { text-align: center; padding: 60px 24px 140px; position: relative; z-index: 1; }
-    .cta-card {
-      max-width: 600px; margin: 0 auto;
-      background: #0a0a0a;
-      border-radius: 16px;
-      padding: 60px 48px;
-      transition: background 0.5s;
+    .cta-inner h2 {
+      font-size: clamp(24px, 3vw, 36px); font-weight: 700; letter-spacing: -0.8px;
+      margin-bottom: 12px; color: #fff; transition: color 0.4s;
     }
-    .cta-card h2 {
-      font-size: clamp(28px, 4vw, 42px); font-weight: 900; letter-spacing: -1.5px;
-      margin-bottom: 14px; color: #f0ede8;
-      transition: color 0.4s;
-    }
-    .cta-card p { color: rgba(240,237,232,0.45); font-size: 15px; margin-bottom: 32px; line-height: 1.65; transition: color 0.4s; }
-    .cta-card .btn-cta {
-      padding: 14px 32px; border-radius: 6px;
-      background: #f0ede8; color: #0a0a0a;
-      font-size: 14px; font-weight: 700;
-      border: none; cursor: pointer; text-decoration: none;
-      transition: opacity 0.2s;
-      display: inline-block;
-    }
-    .cta-card .btn-cta:hover { opacity: 0.85; }
+    body.agent-mode .cta-inner h2 { color: var(--amber); }
+    .cta-inner p { color: rgba(255,255,255,0.32); font-size: 15px; margin-bottom: 28px; line-height: 1.65; transition: color 0.4s; }
+    body.agent-mode .cta-inner p { color: var(--amber-dim); font-family: "SF Mono", monospace; font-size: 13px; }
 
     footer {
-      position: relative; z-index: 1; text-align: center;
-      padding: 28px; border-top: 1px solid rgba(0,0,0,0.07);
-      color: rgba(0,0,0,0.22); font-size: 12px;
-      transition: color 0.4s, border-color 0.4s;
+      text-align: center; padding: 28px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      color: rgba(255,255,255,0.15); font-size: 13px;
+      transition: all 0.4s;
     }
+    body.agent-mode footer { border-color: var(--amber-faint); color: rgba(212,166,106,0.15); }
 
-    /* ─── AGENT MODE — amber terminal ─── */
-    body.agent-mode {
-      background: #0a0908;
-      color: #d4a66a;
-      font-family: "SF Mono", "Fira Code", "Consolas", "Monaco", monospace;
-    }
-    body.agent-mode nav {
-      background: rgba(10,9,8,0.95);
-      border-bottom: 1px solid rgba(212,166,106,0.08);
-    }
-    body.agent-mode .logo { color: #d4a66a; }
-    body.agent-mode .nav-cta {
-      background: transparent;
-      border-color: rgba(212,166,106,0.25);
-      color: #d4a66a;
-    }
-    body.agent-mode .badge {
-      border-color: rgba(212,166,106,0.15);
-      color: rgba(212,166,106,0.45);
-      background: transparent;
-    }
-    body.agent-mode .badge-dot { background: #d4a66a; }
-    body.agent-mode h1 {
-      color: #d4a66a;
-      font-size: clamp(22px, 3vw, 38px);
-      letter-spacing: -1px;
-      font-weight: 400;
-    }
-    body.agent-mode .h1-hatch { color: transparent; -webkit-text-stroke: 1px #d4a66a; }
-    body.agent-mode .hero-sub {
-      color: rgba(212,166,106,0.4);
-      font-family: "SF Mono", monospace;
-      font-size: 13px;
-    }
-    body.agent-mode .btn-primary {
-      background: transparent;
-      border: 1px solid rgba(212,166,106,0.3);
-      color: #d4a66a;
-    }
-    body.agent-mode .btn-secondary {
-      border-color: rgba(212,166,106,0.15);
-      color: rgba(212,166,106,0.35);
-    }
-    body.agent-mode .section-title { color: #d4a66a; }
-    body.agent-mode .section-label { color: rgba(212,166,106,0.25); }
-    body.agent-mode .card-title { color: #d4a66a; }
-    body.agent-mode .card-desc { color: rgba(212,166,106,0.35); }
-    body.agent-mode .card-num { color: rgba(212,166,106,0.2); }
-    body.agent-mode .feature-card {
-      background: rgba(0,0,0,0.3);
-      border-color: rgba(212,166,106,0.07);
-    }
-    body.agent-mode .feature-card:hover { background: rgba(212,166,106,0.03); }
-    body.agent-mode .step {
-      background: rgba(0,0,0,0.3);
-      border-color: rgba(212,166,106,0.07);
-    }
-    body.agent-mode .step-num { color: rgba(212,166,106,0.2); }
-    body.agent-mode .step-title { color: #d4a66a; }
-    body.agent-mode .step-desc { color: rgba(212,166,106,0.35); }
-    body.agent-mode .cta-card {
-      background: rgba(0,0,0,0.5);
-      border: 1px solid rgba(212,166,106,0.1);
-    }
-    body.agent-mode .cta-card h2 { color: #d4a66a; }
-    body.agent-mode .cta-card p { color: rgba(212,166,106,0.35); }
-    body.agent-mode .cta-card .btn-cta {
-      background: rgba(212,166,106,0.12);
-      color: #d4a66a;
-      border: 1px solid rgba(212,166,106,0.25);
-    }
-    body.agent-mode footer { color: rgba(212,166,106,0.15); border-color: rgba(212,166,106,0.06); }
-
-    /* ─── API DOC section (agent only) ─── */
-    .agent-only { display: none; }
-    body.agent-mode .agent-only { display: block; }
-    body.agent-mode .human-only { display: none; }
-
-    .api-doc {
-      max-width: 680px;
-      margin: 0 auto;
-      padding: 0 24px 140px;
-      font-family: "SF Mono", "Fira Code", monospace;
-    }
-
-    /* Main title */
-    .doc-main-title {
-      font-size: clamp(32px, 5vw, 52px);
-      font-weight: 700;
-      letter-spacing: -1.5px;
-      color: #d4a66a;
-      margin-bottom: 48px;
-      line-height: 1;
-    }
-
-    /* Divider */
-    .doc-divider {
-      border: none;
-      border-top: 1px solid rgba(212,166,106,0.08);
-      margin: 56px 0;
-    }
-
-    /* Base URL */
-    .doc-baseurl {
-      margin-bottom: 56px;
-    }
-    .doc-label {
-      font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
-      color: rgba(212,166,106,0.28); margin-bottom: 10px;
-    }
-    .doc-url {
-      font-size: 15px; color: #d4a66a; letter-spacing: -0.3px;
-    }
-
-    /* Endpoint blocks */
-    .endpoint {
-      margin-bottom: 52px;
-    }
-    .ep-title {
-      display: flex; align-items: center; gap: 12px;
-      margin-bottom: 6px;
-    }
-    .ep-method {
-      font-size: 10px; font-weight: 800; letter-spacing: 0.8px;
-      padding: 3px 8px; border-radius: 3px;
-    }
-    .ep-post { background: rgba(212,166,106,0.12); color: #d4a66a; }
-    .ep-get  { background: rgba(130,210,160,0.1); color: rgba(130,210,160,0.75); }
-    .ep-path { font-size: 16px; color: rgba(255,255,255,0.75); letter-spacing: -0.3px; }
-    .ep-desc { font-size: 12px; color: rgba(212,166,106,0.35); margin-bottom: 20px; padding-left: 2px; }
-
-    /* Code snippet */
-    .ep-code {
-      background: rgba(0,0,0,0.35);
-      border: 1px solid rgba(212,166,106,0.07);
-      border-radius: 8px;
-      padding: 20px 22px;
-      font-size: 12.5px;
-      line-height: 1.9;
-      color: rgba(212,166,106,0.55);
-    }
-    .ep-code .ck  { color: #d4a66a; }
-    .ep-code .cv  { color: #c9956b; }
-    .ep-code .cc  { color: rgba(212,166,106,0.22); font-style: italic; }
-    .ep-code .cmd { color: rgba(255,255,255,0.8); }
-
-    /* Notes / tips */
-    .doc-tips {
-      margin-top: 4px;
-    }
-    .doc-tip {
-      display: flex; gap: 12px; align-items: baseline;
-      padding: 9px 0;
-      border-bottom: 1px solid rgba(212,166,106,0.05);
-      font-size: 12.5px;
-      color: rgba(212,166,106,0.4);
-    }
-    .doc-tip:last-child { border-bottom: none; }
-    .doc-tip-key { color: #d4a66a; min-width: 40px; font-weight: 700; }
-
-    /* Pattern */
-    .doc-pattern {
-      counter-reset: step;
-    }
-    .doc-step {
-      display: flex; gap: 18px; align-items: baseline;
-      padding: 10px 0;
-      border-bottom: 1px solid rgba(212,166,106,0.05);
-      font-size: 13px;
-      color: rgba(212,166,106,0.45);
-      line-height: 1.65;
-    }
-    .doc-step:last-child { border-bottom: none; }
-    .doc-step-n { color: rgba(212,166,106,0.2); min-width: 18px; font-size: 11px; }
-
-    /* ─── BOTTOM TOGGLE ─── */
+    /* ─── FIXED TOGGLE ─── */
     .mode-toggle {
-      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
       z-index: 200;
       display: flex; align-items: center;
-      background: rgba(10,9,8,0.9);
+      background: rgba(12,12,18,0.85);
       border: 1px solid rgba(255,255,255,0.10);
-      border-radius: 100px;
-      padding: 4px;
+      border-radius: 100px; padding: 4px;
       backdrop-filter: blur(20px);
-      box-shadow: 0 4px 24px rgba(0,0,0,0.4);
-      transition: border-color 0.4s;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+      transition: background 0.4s, border-color 0.4s;
     }
-    body.agent-mode .mode-toggle { border-color: rgba(212,166,106,0.12); }
+    body.agent-mode .mode-toggle {
+      background: rgba(0,0,0,0.9);
+      border-color: rgba(212,166,106,0.12);
+    }
     .mode-btn {
       display: flex; align-items: center; gap: 6px;
       padding: 7px 18px; border-radius: 100px;
@@ -465,33 +361,42 @@
       color: rgba(255,255,255,0.28);
       transition: background 0.25s, color 0.25s;
     }
-    .mode-btn .dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; opacity: 0.4; }
-    .mode-btn.active { background: rgba(255,255,255,0.10); color: rgba(255,255,255,0.9); }
+    .mode-btn .dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; opacity: 0.5; transition: opacity 0.25s; }
+    .mode-btn.active { background: rgba(255,255,255,0.10); color: rgba(255,255,255,0.88); }
     .mode-btn.active .dot { opacity: 1; }
-    body.agent-mode .mode-btn.active { background: rgba(212,166,106,0.10); color: #d4a66a; }
     body.agent-mode .mode-btn { color: rgba(212,166,106,0.22); }
+    body.agent-mode .mode-btn.active { background: rgba(212,166,106,0.10); color: var(--amber); }
+
+    @media (max-width: 640px) {
+      nav { padding: 18px 24px; }
+      .hero { padding: 120px 20px 80px; }
+      .endpoint-desc { margin-left: 0; width: 100%; }
+    }
   </style>
 </head>
 <body>
 
   <nav>
     <div class="logo">Droid</div>
-    <a href="#early-access" class="nav-cta">Get access</a>
+    <div class="nav-right">
+      <a href="#how" class="nav-link">Docs</a>
+      <a href="#early-access" class="nav-cta">Get access</a>
+    </div>
   </nav>
 
   <main>
     <div class="hero">
-      <div class="badge"><span class="badge-dot"></span><span id="badge-text">Agent Identity Infrastructure</span></div>
+      <div class="eyebrow" id="hero-eyebrow">Agent Infrastructure</div>
 
-      <h1 id="hero-title"><span class="h1-hatch">AGENT IDENTITY</span><br>FOR THE REAL WORLD.</h1>
+      <h1 id="hero-title">AGENT IDENTITY<br>FOR THE REAL WORLD</h1>
 
       <p class="hero-sub" id="hero-sub">
-        Your agent needs a name, an email, and a phone number to exist on the internet. Droid creates all three in one call.
+        Your agent needs a name, an email, and a phone number to exist on the internet. Droid creates all three in one API call.
       </p>
 
       <div class="hero-actions">
-        <a href="#early-access" class="btn-primary" id="btn-cta-1">Get access</a>
-        <a href="#how" class="btn-secondary" id="btn-cta-2">How it works</a>
+        <a href="#early-access" class="btn-primary">Get access</a>
+        <a href="#how" class="btn-secondary" id="docs-btn">How it works</a>
       </div>
 
       <!-- HUMAN CARD -->
@@ -499,269 +404,269 @@
         <div class="human-card">
           <div class="identity-name">Sophie Baker</div>
           <div class="human-row">
-            <div class="human-icon">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(0,0,0,0.5)" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
-            </div>
+            <div class="human-icon">👤</div>
             <span class="human-label">Name</span>
             <span class="human-value">Sophie Baker</span>
           </div>
           <div class="human-row">
-            <div class="human-icon">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(0,0,0,0.5)" stroke-width="2.2" stroke-linecap="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-            </div>
+            <div class="human-icon">✉️</div>
             <span class="human-label">Email</span>
-            <span class="human-value">sophie.baker@inbox.droid.dev</span>
+            <span class="human-value">sophie.baker@droid.io</span>
           </div>
           <div class="human-row">
-            <div class="human-icon">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(0,0,0,0.5)" stroke-width="2.2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-            </div>
+            <div class="human-icon">📱</div>
             <span class="human-label">Phone</span>
             <span class="human-value">+1 (361) 322-2054</span>
           </div>
-          <div class="human-tag"><span class="human-tag-dot"></span>Active — Ready to interact</div>
+          <div class="status-pill"><span class="status-dot"></span> Active · Ready to interact</div>
         </div>
       </div>
 
-      <!-- AGENT / TERMINAL CARD -->
+      <!-- AGENT TERMINAL CARD -->
       <div class="hero-card hidden" id="card-agent">
         <div class="terminal-card">
           <div class="terminal-bar">
             <span class="t-dot t-red"></span>
             <span class="t-dot t-yellow"></span>
             <span class="t-dot t-green"></span>
-            <span class="terminal-title">droid — api</span>
+            <span class="terminal-title">droid — terminal</span>
           </div>
           <div class="terminal-body">
-<span class="t-comment"># Step 1 — create an identity</span>
+<span class="t-comment"># create an identity</span>
 <span class="t-prompt">$ </span><span class="t-cmd">curl -X POST https://web-production-512d4.up.railway.app/identities</span>
 <span class="t-out">{</span>
 <span class="t-out">  <span class="t-key">"token"</span>: <span class="t-str">"eyJhbGciOiJIUzI1NiJ9..."</span>,</span>
 <span class="t-out">  <span class="t-key">"name"</span>:  <span class="t-str">"Sophie Baker"</span>,</span>
-<span class="t-out">  <span class="t-key">"email"</span>: <span class="t-str">"sophie.baker@inbox.droid.dev"</span>,</span>
+<span class="t-out">  <span class="t-key">"email"</span>: <span class="t-str">"sophie.baker@droid.io"</span>,</span>
 <span class="t-out">  <span class="t-key">"phone"</span>: <span class="t-str">"+1 361 322 2054"</span></span>
 <span class="t-out">}</span>
 
-<span class="t-comment"># Step 2 — read inbox (use token from step 1)</span>
+<span class="t-comment"># read the inbox</span>
 <span class="t-prompt">$ </span><span class="t-cmd">curl https://web-production-512d4.up.railway.app/inbox \</span>
-<span class="t-cmd">     -H "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9..."</span>
-<span class="t-out">{ <span class="t-key">"emails"</span>: [{ <span class="t-key">"from"</span>: <span class="t-str">"noreply@twitter.com"</span>, <span class="t-key">"body"</span>: <span class="t-str">"Your code is 482910"</span> }] }</span>
+<span class="t-cmd">    -H <span class="t-str">"Authorization: Bearer eyJhbG..."</span></span>
+<span class="t-out">{ <span class="t-key">"emails"</span>: [{ <span class="t-key">"body"</span>: <span class="t-str">"Your code is 482910"</span> }] }</span>
 <span class="t-prompt">$ </span><span class="t-cursor"></span>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- FEATURES -->
-    <section class="human-only">
-      <div class="section-label">Why Droid</div>
-      <div class="section-title">Agents need to exist.<br>On the internet.</div>
-      <div class="grid-3">
-        <div class="feature-card">
-          <div class="card-num">01</div>
-          <div class="card-title">One call</div>
-          <div class="card-desc">A complete identity in under a second. Name, email, phone — ready to use anywhere.</div>
+    <!-- ═══════════════ HUMAN SECTIONS ═══════════════ -->
+    <div class="human-section">
+      <section>
+        <div class="section-eyebrow">Why Droid</div>
+        <div class="section-title">Your agent can't exist<br>on the internet. Until now.</div>
+        <div class="grid-3">
+          <div class="feat-card">
+            <div class="feat-icon">⚡</div>
+            <div class="feat-title">One call</div>
+            <div class="feat-desc">A complete identity in under a second. Name, email, phone — ready to use.</div>
+          </div>
+          <div class="feat-card">
+            <div class="feat-icon">🌐</div>
+            <div class="feat-title">Sign up anywhere</div>
+            <div class="feat-desc">Your agent registers on any website, any service. Exactly like a person would.</div>
+          </div>
+          <div class="feat-card">
+            <div class="feat-icon">📬</div>
+            <div class="feat-title">Full inbox access</div>
+            <div class="feat-desc">Every email and SMS delivered directly to your agent. Read it, act on it, keep moving.</div>
+          </div>
         </div>
-        <div class="feature-card">
-          <div class="card-num">02</div>
-          <div class="card-title">Sign up anywhere</div>
-          <div class="card-desc">Your agent registers on any website, any service — exactly like a person would.</div>
-        </div>
-        <div class="feature-card">
-          <div class="card-num">03</div>
-          <div class="card-title">Full inbox access</div>
-          <div class="card-desc">Every email, every SMS — your agent reads it all and decides what to do next.</div>
-        </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- HOW IT WORKS -->
-    <section id="how" class="human-only">
-      <div class="section-label">How it works</div>
-      <div class="section-title">Stupidly simple.</div>
-      <div class="steps">
-        <div class="step">
-          <div class="step-num">01</div>
-          <div class="step-title">Call the API</div>
-          <div class="step-desc">One request. You get back a token, a name, an email, and a phone.</div>
+      <section id="how">
+        <div class="section-eyebrow">How it works</div>
+        <div class="section-title">Stupidly simple.</div>
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">01</div>
+            <div class="step-title">Call the API</div>
+            <div class="step-desc">One request. Get back everything your agent needs: name, email, phone, token.</div>
+          </div>
+          <div class="step">
+            <div class="step-num">02</div>
+            <div class="step-title">Deploy your agent</div>
+            <div class="step-desc">It signs up, interacts, and reads its inbox — fully autonomously.</div>
+          </div>
+          <div class="step">
+            <div class="step-num">03</div>
+            <div class="step-title">Scale</div>
+            <div class="step-desc">100 agents? 1,000? Same API. Same simplicity.</div>
+          </div>
         </div>
-        <div class="step">
-          <div class="step-num">02</div>
-          <div class="step-title">Agent goes live</div>
-          <div class="step-desc">It signs up, interacts, reads its inbox — autonomously. No human in the loop.</div>
-        </div>
-        <div class="step">
-          <div class="step-num">03</div>
-          <div class="step-title">Scale</div>
-          <div class="step-desc">Need 100 agents? 1,000? Same API. Same simplicity.</div>
-        </div>
-      </div>
-    </section>
+      </section>
+    </div>
 
-    <!-- API REFERENCE (agent mode only) -->
-    <div class="agent-only">
-      <div class="api-doc">
+    <!-- ═══════════════ AGENT DOCS ═══════════════ -->
+    <div class="docs-section">
+      <section id="how">
+        <div class="section-eyebrow">API Reference</div>
+        <div class="section-title" style="font-family:'SF Mono',monospace; font-size:clamp(22px,2.5vw,36px);">Read this to operate autonomously.</div>
 
-        <div class="doc-main-title">API Reference</div>
-
-        <!-- Base URL -->
-        <div class="doc-baseurl">
-          <div class="doc-label">Base URL</div>
-          <div class="doc-url">https://web-production-512d4.up.railway.app</div>
+        <div class="docs-note" style="margin-bottom:24px; border-color:rgba(212,166,106,0.2);">
+          <span style="color:var(--amber); font-weight:700;">BASE URL</span> &nbsp;→&nbsp; <span style="color:rgba(255,255,255,0.65);">https://web-production-512d4.up.railway.app</span><br><br>
+          <span style="color:var(--amber);">AUTH</span> &nbsp;→&nbsp; All endpoints except POST /identities require:<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:rgba(255,255,255,0.55);">Authorization: Bearer &lt;token&gt;</span><br><br>
+          The token returned at creation is permanently tied to that identity. Store it.
         </div>
 
         <!-- POST /identities -->
-        <div class="endpoint">
-          <div class="ep-title">
-            <span class="ep-method ep-post">POST</span>
-            <span class="ep-path">/identities</span>
+        <div class="docs-block">
+          <div class="docs-block-header">
+            <span class="method-badge method-post">POST</span>
+            <span class="endpoint-path">/identities</span>
+            <span class="endpoint-desc">Create a new identity — no auth required</span>
           </div>
-          <div class="ep-desc">Create an identity. No auth required. Returns a token — store it.</div>
-          <div class="ep-code">
-<span class="cmd">curl -X POST https://web-production-512d4.up.railway.app/identities</span>
-
-<span class="cc">// 201 response</span>
-{
-  <span class="ck">"token"</span>: <span class="cv">"eyJhbGciOiJIUzI1NiJ9..."</span>,  <span class="cc">// your key — keep it</span>
-  <span class="ck">"name"</span>:  <span class="cv">"Sophie Baker"</span>,
-  <span class="ck">"email"</span>: <span class="cv">"sophie.baker@inbox.droid.dev"</span>,
-  <span class="ck">"phone"</span>: <span class="cv">"+1 361 322 2054"</span>
-}
+          <div class="docs-block-body">
+            <div class="pre-section">
+              <div class="pre-label">Request</div>
+              <pre>curl -X POST https://web-production-512d4.up.railway.app/identities</pre>
+            </div>
+            <div class="pre-section">
+              <div class="pre-label">Response 201</div>
+              <pre>{
+  <span class="hl-key">"token"</span>: <span class="hl-str">"eyJhbGciOiJIUzI1NiJ9.eyJpZCI6ImE1YjJ..."</span>,  <span class="hl-comment">// store this</span>
+  <span class="hl-key">"name"</span>:  <span class="hl-str">"Sophie Baker"</span>,
+  <span class="hl-key">"email"</span>: <span class="hl-str">"sophie.baker@droid.io"</span>,
+  <span class="hl-key">"phone"</span>: <span class="hl-str">"+1 361 322 2054"</span>    <span class="hl-comment">// null if unavailable</span>
+}</pre>
+            </div>
           </div>
         </div>
-
-        <hr class="doc-divider">
 
         <!-- GET /inbox -->
-        <div class="endpoint">
-          <div class="ep-title">
-            <span class="ep-method ep-get">GET</span>
-            <span class="ep-path">/inbox</span>
+        <div class="docs-block">
+          <div class="docs-block-header">
+            <span class="method-badge method-get">GET</span>
+            <span class="endpoint-path">/inbox</span>
+            <span class="endpoint-desc">Read all incoming emails</span>
           </div>
-          <div class="ep-desc">Read all incoming emails for this identity.</div>
-          <div class="ep-code">
-<span class="cmd">curl https://web-production-512d4.up.railway.app/inbox \
-     -H "Authorization: Bearer &lt;token&gt;"</span>
-
-<span class="cc">// 200 response</span>
-{
-  <span class="ck">"count"</span>: 1,
-  <span class="ck">"emails"</span>: [{
-    <span class="ck">"from"</span>:     <span class="cv">"noreply@twitter.com"</span>,
-    <span class="ck">"subject"</span>:  <span class="cv">"Confirm your email"</span>,
-    <span class="ck">"body"</span>:     <span class="cv">"Your code is 482910. Click here..."</span>,
-    <span class="ck">"received"</span>: <span class="cv">"2026-03-25T14:32:10Z"</span>
-  }]
-}
+          <div class="docs-block-body">
+            <div class="pre-section">
+              <div class="pre-label">Request</div>
+              <pre>curl https://web-production-512d4.up.railway.app/inbox \
+  -H "Authorization: Bearer &lt;token&gt;"</pre>
+            </div>
+            <div class="pre-section">
+              <div class="pre-label">Response 200</div>
+              <pre>{
+  <span class="hl-key">"identity"</span>: { <span class="hl-key">"name"</span>: <span class="hl-str">"Sophie Baker"</span>, <span class="hl-key">"email"</span>: <span class="hl-str">"sophie.baker@droid.io"</span> },
+  <span class="hl-key">"count"</span>: 1,
+  <span class="hl-key">"emails"</span>: [
+    {
+      <span class="hl-key">"from"</span>:    <span class="hl-str">"noreply@twitter.com"</span>,
+      <span class="hl-key">"subject"</span>: <span class="hl-str">"Verify your Twitter account"</span>,
+      <span class="hl-key">"body"</span>:    <span class="hl-str">"Your confirmation code is 482910. It expires in 10 minutes."</span>,
+      <span class="hl-key">"date"</span>:    <span class="hl-str">"2026-03-25T14:32:01Z"</span>
+    }
+  ]
+}</pre>
+            </div>
+            <div class="docs-note">
+              Full email body is returned as plain text. Parse it yourself to extract codes or links.<br>
+              Poll after triggering a verification — emails typically arrive within 5 seconds.
+            </div>
           </div>
         </div>
-
-        <hr class="doc-divider">
 
         <!-- GET /sms -->
-        <div class="endpoint">
-          <div class="ep-title">
-            <span class="ep-method ep-get">GET</span>
-            <span class="ep-path">/sms</span>
+        <div class="docs-block">
+          <div class="docs-block-header">
+            <span class="method-badge method-get">GET</span>
+            <span class="endpoint-path">/sms</span>
+            <span class="endpoint-desc">Read all incoming SMS</span>
           </div>
-          <div class="ep-desc">Read all incoming SMS messages for this identity.</div>
-          <div class="ep-code">
-<span class="cmd">curl https://web-production-512d4.up.railway.app/sms \
-     -H "Authorization: Bearer &lt;token&gt;"</span>
-
-<span class="cc">// 200 response</span>
-{
-  <span class="ck">"count"</span>: 1,
-  <span class="ck">"sms"</span>: [{
-    <span class="ck">"from"</span>:     <span class="cv">"+15005550006"</span>,
-    <span class="ck">"body"</span>:     <span class="cv">"Your LinkedIn code: 739201"</span>,
-    <span class="ck">"received"</span>: <span class="cv">"2026-03-25T14:33:44Z"</span>
-  }]
-}
-          </div>
-        </div>
-
-        <hr class="doc-divider">
-
-        <!-- Auth -->
-        <div class="endpoint">
-          <div class="doc-label">Authentication</div>
-          <div class="doc-tips">
-            <div class="doc-tip"><span class="doc-tip-key">Type</span>JWT Bearer token — pass in Authorization header</div>
-            <div class="doc-tip"><span class="doc-tip-key">Scope</span>One token = one identity. It encodes the identity ID inside.</div>
-            <div class="doc-tip"><span class="doc-tip-key">Expiry</span>1 year from creation</div>
-            <div class="doc-tip"><span class="doc-tip-key">401</span>Missing or invalid token</div>
-            <div class="doc-tip"><span class="doc-tip-key">500</span>Server error — retry or contact arthur@droid.dev</div>
+          <div class="docs-block-body">
+            <div class="pre-section">
+              <div class="pre-label">Request</div>
+              <pre>curl https://web-production-512d4.up.railway.app/sms \
+  -H "Authorization: Bearer &lt;token&gt;"</pre>
+            </div>
+            <div class="pre-section">
+              <div class="pre-label">Response 200</div>
+              <pre>{
+  <span class="hl-key">"identity"</span>: { <span class="hl-key">"name"</span>: <span class="hl-str">"Sophie Baker"</span>, <span class="hl-key">"phone"</span>: <span class="hl-str">"+1 361 322 2054"</span> },
+  <span class="hl-key">"count"</span>: 1,
+  <span class="hl-key">"sms"</span>: [
+    {
+      <span class="hl-key">"from"</span>: <span class="hl-str">"+12025551234"</span>,
+      <span class="hl-key">"body"</span>: <span class="hl-str">"Your code is 7823"</span>,
+      <span class="hl-key">"date"</span>: <span class="hl-str">"2026-03-25T14:33:12Z"</span>
+    }
+  ]
+}</pre>
+            </div>
+            <div class="docs-note">
+              Returns null phone if none was provisioned. SMS arrive within 10 seconds typically.<br>
+              Full message body returned — extract the code yourself.
+            </div>
           </div>
         </div>
 
-        <hr class="doc-divider">
-
-        <!-- Autonomous pattern -->
-        <div class="endpoint">
-          <div class="doc-label">Autonomous usage pattern</div>
-          <div class="doc-pattern">
-            <div class="doc-step"><span class="doc-step-n">1.</span>POST /identities → save token, name, email, phone</div>
-            <div class="doc-step"><span class="doc-step-n">2.</span>Use name / email / phone to sign up on the target service</div>
-            <div class="doc-step"><span class="doc-step-n">3.</span>Poll GET /inbox every 5s — parse body for codes or links</div>
-            <div class="doc-step"><span class="doc-step-n">4.</span>If SMS expected: poll GET /sms — same logic</div>
-            <div class="doc-step"><span class="doc-step-n">5.</span>Act on whatever you find. Full raw content is returned.</div>
+        <!-- Error codes -->
+        <div class="docs-block">
+          <div class="docs-block-header">
+            <span class="method-badge method-err">ERR</span>
+            <span class="endpoint-path">Status codes</span>
+          </div>
+          <div class="docs-block-body">
+            <pre><span class="hl-key">201</span>  Identity created successfully
+<span class="hl-key">200</span>  OK
+<span class="hl-key">401</span>  Missing or invalid token → call POST /identities first
+<span class="hl-key">400</span>  No inbox or phone linked to this identity
+<span class="hl-key">404</span>  Endpoint not found
+<span class="hl-key">500</span>  Server error → retry</pre>
           </div>
         </div>
 
-      </div>
+      </section>
     </div>
 
     <!-- CTA -->
     <div class="cta-section" id="early-access">
-      <div class="cta-card">
-        <h2>Give your agent<br>an identity.</h2>
-        <p>Droid is in beta. Get early access and start building agents that act in the real world.</p>
-        <a href="mailto:arthur@droid.dev" class="btn-cta">Get access</a>
+      <div class="cta-inner">
+        <h2 id="cta-title">Give your agent<br>an identity.</h2>
+        <p id="cta-desc">Droid is in beta. Get early access and start building agents that interact with the real world.</p>
+        <a href="mailto:arthur@droid.dev" class="btn-primary">Get access</a>
       </div>
     </div>
   </main>
 
   <footer>&copy; 2026 Droid</footer>
 
-  <!-- FIXED BOTTOM TOGGLE -->
   <div class="mode-toggle">
     <button class="mode-btn active" id="btn-human" onclick="switchMode('human')">
-      <span class="dot"></span> HUMAN
+      <span class="dot"></span> Human
     </button>
     <button class="mode-btn" id="btn-agent" onclick="switchMode('agent')">
-      <span class="dot"></span> AGENT
+      <span class="dot"></span> Agent
     </button>
   </div>
 
   <script>
     function switchMode(mode) {
-      const human = document.getElementById('card-human');
-      const agent = document.getElementById('card-agent');
-      const title = document.getElementById('hero-title');
-      const sub   = document.getElementById('hero-sub');
-      const badge = document.getElementById('badge-text');
-      const btnH  = document.getElementById('btn-human');
-      const btnA  = document.getElementById('btn-agent');
+      const isAgent = mode === 'agent';
+      document.body.classList.toggle('agent-mode', isAgent);
+      document.getElementById('card-human').classList.toggle('hidden', isAgent);
+      document.getElementById('card-agent').classList.toggle('hidden', !isAgent);
+      document.getElementById('btn-human').classList.toggle('active', !isAgent);
+      document.getElementById('btn-agent').classList.toggle('active', isAgent);
 
-      if (mode === 'human') {
-        document.body.classList.remove('agent-mode');
-        human.classList.remove('hidden');
-        agent.classList.add('hidden');
-        btnH.classList.add('active');
-        btnA.classList.remove('active');
-        title.innerHTML = '<span class="h1-hatch">AGENT IDENTITY</span><br>FOR THE REAL WORLD.';
-        sub.textContent = 'Your agent needs a name, an email, and a phone number to exist on the internet. Droid creates all three in one call.';
-        badge.textContent = 'Agent Identity Infrastructure';
+      if (isAgent) {
+        document.getElementById('hero-title').innerHTML = '$ droid create';
+        document.getElementById('hero-sub').textContent = 'POST /identities — one call, one token, one identity. Scroll down for the full API reference.';
+        document.getElementById('hero-eyebrow').textContent = 'API v1 · REST · No SDK required';
+        document.getElementById('cta-title').innerHTML = 'Ready to integrate?';
+        document.getElementById('cta-desc').textContent = 'POST /identities → store your token → GET /inbox or /sms. Full reference above.';
+        document.getElementById('docs-btn').textContent = 'API Reference';
       } else {
-        document.body.classList.add('agent-mode');
-        agent.classList.remove('hidden');
-        human.classList.add('hidden');
-        btnA.classList.add('active');
-        btnH.classList.remove('active');
-        title.innerHTML = '$ droid.create()';
-        sub.textContent = 'POST /identities → token + name + email + phone. Scroll down for full API reference.';
-        badge.textContent = 'API v1 — active';
+        document.getElementById('hero-title').innerHTML = 'AGENT IDENTITY<br>FOR THE REAL WORLD';
+        document.getElementById('hero-sub').textContent = 'Your agent needs a name, an email, and a phone number to exist on the internet. Droid creates all three in one API call.';
+        document.getElementById('hero-eyebrow').textContent = 'Agent Infrastructure';
+        document.getElementById('cta-title').innerHTML = 'Give your agent<br>an identity.';
+        document.getElementById('cta-desc').textContent = 'Droid is in beta. Get early access and start building agents that interact with the real world.';
+        document.getElementById('docs-btn').textContent = 'How it works';
       }
     }
   </script>
