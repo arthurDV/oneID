@@ -3,11 +3,15 @@ Droid — Agent Identity API
 Give any AI agent a real identity in one API call.
 Email (MailSlurp) + Phone (Twilio) + Generated name.
 
-Endpoints:
-  POST /identities            → create an identity
-  GET  /identities            → list all identities
-  GET  /identities/<id>/inbox → read all received emails (full body)
-  GET  /identities/<id>/sms   → read all received SMS
+Auth:
+  POST /auth/register              → get a JWT token
+  POST /auth/verify                → check if your token works
+
+Endpoints (all require Authorization: Bearer <token>):
+  POST /identities                 → create an identity
+  GET  /identities                 → list YOUR identities
+  GET  /identities/<id>/inbox      → read emails
+  GET  /identities/<id>/sms        → read SMS
 """
 
 import json
@@ -20,6 +24,7 @@ from names import generate_name
 from config import MAILSLURP_API_KEY, TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN
 from providers.email import create_inbox, get_emails
 from providers.sms import buy_phone_number, get_sms_messages
+from auth import create_token, verify_token, generate_user_id
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 IDENTITIES_FILE = os.path.join(DATA_DIR, "identities.json")
@@ -59,11 +64,33 @@ class AgentIdentityHandler(BaseHTTPRequestHandler):
             return {}
         return json.loads(self.rfile.read(length))
 
+    def _get_user(self):
+        """Extract user_id from JWT in Authorization header. Returns None if invalid."""
+        auth = self.headers.get("Authorization", "")
+        if not auth.startswith("Bearer "):
+            return None
+        token = auth[7:]  # skip "Bearer "
+        payload = verify_token(token)
+        if not payload:
+            return None
+        return payload.get("user_id")
+
+    def _require_auth(self):
+        """Check auth. Returns user_id or sends 401 and returns None."""
+        user_id = self._get_user()
+        if not user_id:
+            self._send_json(401, {
+                "error": "Unauthorized",
+                "message": "Missing or invalid token. Get one at POST /auth/register"
+            })
+            return None
+        return user_id
+
     def do_OPTIONS(self):
         self.send_response(200)
         self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
         self.end_headers()
 
     # ---------- GET ----------
@@ -81,14 +108,26 @@ class AgentIdentityHandler(BaseHTTPRequestHandler):
             self.wfile.write(content)
             return
 
-        # GET /identities
+        # GET /identities — list YOUR identities only
         if self.path == "/identities":
+            user_id = self._require_auth()
+            if not user_id:
+                return
+
             identities = load_identities()
-            self._send_json(200, {"identities": list(identities.values())})
+            my_identities = [
+                v for v in identities.values()
+                if v.get("owner") == user_id
+            ]
+            self._send_json(200, {"identities": my_identities})
             return
 
-        # GET /identities/<id>/inbox — full email content
+        # GET /identities/<id>/inbox
         if self.path.startswith("/identities/") and self.path.endswith("/inbox"):
+            user_id = self._require_auth()
+            if not user_id:
+                return
+
             identity_id = self.path.split("/")[2]
             identities = load_identities()
 
@@ -97,8 +136,13 @@ class AgentIdentityHandler(BaseHTTPRequestHandler):
                 return
 
             identity = identities[identity_id]
-            inbox_id = identity.get("inbox_id")
 
+            # check ownership
+            if identity.get("owner") != user_id:
+                self._send_json(403, {"error": "This identity doesn't belong to you"})
+                return
+
+            inbox_id = identity.get("inbox_id")
             if not inbox_id:
                 self._send_json(400, {"error": "No email inbox linked"})
                 return
@@ -117,8 +161,12 @@ class AgentIdentityHandler(BaseHTTPRequestHandler):
                 self._send_json(500, {"error": str(e)})
             return
 
-        # GET /identities/<id>/sms — full SMS content
+        # GET /identities/<id>/sms
         if self.path.startswith("/identities/") and self.path.endswith("/sms"):
+            user_id = self._require_auth()
+            if not user_id:
+                return
+
             identity_id = self.path.split("/")[2]
             identities = load_identities()
 
@@ -127,8 +175,13 @@ class AgentIdentityHandler(BaseHTTPRequestHandler):
                 return
 
             identity = identities[identity_id]
-            phone = identity.get("phone")
 
+            # check ownership
+            if identity.get("owner") != user_id:
+                self._send_json(403, {"error": "This identity doesn't belong to you"})
+                return
+
+            phone = identity.get("phone")
             if not phone:
                 self._send_json(400, {"error": "No phone number linked"})
                 return
@@ -153,8 +206,33 @@ class AgentIdentityHandler(BaseHTTPRequestHandler):
 
     def do_POST(self):
 
-        # POST /identities
+        # POST /auth/register — get a JWT token
+        if self.path == "/auth/register":
+            user_id = generate_user_id()
+            token = create_token(user_id)
+            print(f"  🔑 New user registered: {user_id}")
+            self._send_json(201, {
+                "user_id": user_id,
+                "token": token,
+                "message": "Save this token. Use it as: Authorization: Bearer <token>"
+            })
+            return
+
+        # POST /auth/verify — check if token is valid
+        if self.path == "/auth/verify":
+            user_id = self._get_user()
+            if user_id:
+                self._send_json(200, {"valid": True, "user_id": user_id})
+            else:
+                self._send_json(401, {"valid": False, "error": "Invalid or expired token"})
+            return
+
+        # POST /identities — create identity (requires auth)
         if self.path == "/identities":
+            user_id = self._require_auth()
+            if not user_id:
+                return
+
             try:
                 first_name, last_name = generate_name()
 
@@ -175,6 +253,7 @@ class AgentIdentityHandler(BaseHTTPRequestHandler):
                 identity_id = str(uuid.uuid4())[:8]
                 identity = {
                     "id": identity_id,
+                    "owner": user_id,
                     "first_name": first_name,
                     "last_name": last_name,
                     "email": inbox["email"],
@@ -213,10 +292,14 @@ if __name__ == "__main__":
 ║                                          ║
 ║  🚀 http://localhost:{port}                ║
 ║                                          ║
-║  POST /identities            → create    ║
-║  GET  /identities            → list      ║
-║  GET  /identities/:id/inbox  → emails    ║
-║  GET  /identities/:id/sms    → SMS       ║
+║  POST /auth/register           → token   ║
+║  POST /auth/verify             → check   ║
+║  POST /identities              → create  ║
+║  GET  /identities              → list    ║
+║  GET  /identities/:id/inbox    → emails  ║
+║  GET  /identities/:id/sms     → SMS     ║
+║                                          ║
+║  🔒 All endpoints require JWT token      ║
 ║                                          ║
 ║  Email : {"✅ MailSlurp" if MAILSLURP_API_KEY != "COLLE_TA_CLE_MAILSLURP_ICI" else "⚠️  not configured"}               ║
 ║  Phone : {"✅ Twilio  " if TWILIO_READY else "⚠️  not configured"}               ║

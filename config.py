@@ -9,3 +9,4 @@ import os
 MAILSLURP_API_KEY  = os.environ.get("MAILSLURP_API_KEY", "")
 TWILIO_ACCOUNT_SID = os.environ.get("TWILIO_ACCOUNT_SID", "")
 TWILIO_AUTH_TOKEN  = os.environ.get("TWILIO_AUTH_TOKEN", "")
+JWT_SECRET         = os.environ.get("JWT_SECRET", "droid-dev-secret-change-me")
