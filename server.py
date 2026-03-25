@@ -1,19 +1,24 @@
 """
-Agent Identity API — MVP v3
+Agent Identity API — MVP v4
 Donne une vraie identité à un agent en un seul appel.
 Email (MailSlurp) + Téléphone (Twilio) + Nom généré.
 
-Endpoints :
+Endpoints publics :
+  POST /auth/register            → créer un compte, obtenir une clé API
+
+Endpoints protégés (Authorization: Bearer sk_xxx) :
   POST /identities               → créer une identité complète
-  GET  /identities               → lister toutes les identités
+  GET  /identities               → lister ses identités
   GET  /identities/<id>/inbox    → lire les emails reçus
   GET  /identities/<id>/sms      → lire les SMS reçus
+  GET  /identities/<id>/verification-code → lire le code de vérification
 """
 
 import json
 import uuid
 import os
 import re
+import secrets
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from datetime import datetime
 
@@ -50,6 +55,7 @@ def extract_code(text):
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 IDENTITIES_FILE = os.path.join(DATA_DIR, "identities.json")
+KEYS_FILE = os.path.join(DATA_DIR, "keys.json")
 os.makedirs(DATA_DIR, exist_ok=True)
 
 TWILIO_READY = TWILIO_ACCOUNT_SID != "COLLE_TON_ACCOUNT_SID_ICI"
@@ -69,6 +75,22 @@ def save_identities(identities):
         json.dump(identities, f, indent=2)
 
 
+def load_keys():
+    if not os.path.exists(KEYS_FILE):
+        return {}
+    with open(KEYS_FILE, "r") as f:
+        return json.load(f)
+
+
+def save_keys(keys):
+    with open(KEYS_FILE, "w") as f:
+        json.dump(keys, f, indent=2)
+
+
+def generate_api_key():
+    return "sk_" + secrets.token_hex(24)
+
+
 # --- Handler ---
 
 class AgentIdentityHandler(BaseHTTPRequestHandler):
@@ -84,6 +106,19 @@ class AgentIdentityHandler(BaseHTTPRequestHandler):
         if length == 0:
             return {}
         return json.loads(self.rfile.read(length))
+
+    def _auth(self):
+        """Valide la clé API. Retourne le compte si valide, None sinon."""
+        auth = self.headers.get("Authorization", "")
+        if not auth.startswith("Bearer sk_"):
+            self._send_json(401, {"error": "Missing or invalid API key. Use: Authorization: Bearer sk_..."})
+            return None
+        api_key = auth.replace("Bearer ", "").strip()
+        keys = load_keys()
+        if api_key not in keys:
+            self._send_json(401, {"error": "Invalid API key."})
+            return None
+        return keys[api_key]
 
     # ---------- GET ----------
 
@@ -102,12 +137,19 @@ class AgentIdentityHandler(BaseHTTPRequestHandler):
 
         # GET /identities
         if self.path == "/identities":
+            account = self._auth()
+            if not account:
+                return
             identities = load_identities()
-            self._send_json(200, {"identities": list(identities.values())})
+            mine = [i for i in identities.values() if i.get("owner") == account["api_key"]]
+            self._send_json(200, {"identities": mine})
             return
 
         # GET /identities/<id>/inbox  — emails
         if self.path.startswith("/identities/") and self.path.endswith("/inbox"):
+            account = self._auth()
+            if not account:
+                return
             identity_id = self.path.split("/")[2]
             identities = load_identities()
 
@@ -138,6 +180,9 @@ class AgentIdentityHandler(BaseHTTPRequestHandler):
 
         # GET /identities/<id>/verification-code
         if self.path.startswith("/identities/") and self.path.endswith("/verification-code"):
+            account = self._auth()
+            if not account:
+                return
             identity_id = self.path.split("/")[2]
             identities = load_identities()
 
@@ -195,6 +240,9 @@ class AgentIdentityHandler(BaseHTTPRequestHandler):
 
         # GET /identities/<id>/sms  — SMS
         if self.path.startswith("/identities/") and self.path.endswith("/sms"):
+            account = self._auth()
+            if not account:
+                return
             identity_id = self.path.split("/")[2]
             identities = load_identities()
 
@@ -229,8 +277,35 @@ class AgentIdentityHandler(BaseHTTPRequestHandler):
 
     def do_POST(self):
 
+        # POST /auth/register — créer un compte et obtenir une clé API
+        if self.path == "/auth/register":
+            body = self._read_body()
+            email = body.get("email", "").strip()
+            if not email:
+                self._send_json(400, {"error": "email is required"})
+                return
+            api_key = generate_api_key()
+            account = {
+                "api_key": api_key,
+                "email": email,
+                "created_at": datetime.now().isoformat(),
+            }
+            keys = load_keys()
+            keys[api_key] = account
+            save_keys(keys)
+            print(f"  ✅ Nouveau compte : {email} → {api_key[:12]}...")
+            self._send_json(201, {
+                "api_key": api_key,
+                "email": email,
+                "message": "Keep your API key safe. Use it in all requests: Authorization: Bearer <api_key>",
+            })
+            return
+
         # POST /identities
         if self.path == "/identities":
+            account = self._auth()
+            if not account:
+                return
             try:
                 first_name, last_name = generate_name()
 
@@ -261,6 +336,7 @@ class AgentIdentityHandler(BaseHTTPRequestHandler):
                     "phone_sid": phone_sid,
                     "created_at": datetime.now().isoformat(),
                     "status": "active",
+                    "owner": account["api_key"],
                 }
 
                 identities = load_identities()
