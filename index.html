@@ -51,7 +51,7 @@
       color: #0a0a0a;
       transition: color 0.4s;
     }
-    body.agent-mode .logo { color: var(--amber); }
+    body.agent-mode .logo { color: var(--amber); font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif; letter-spacing: 2px; }
     .nav-right { display: flex; align-items: center; gap: 24px; }
     .nav-link {
       font-size: 13px; font-weight: 500; color: rgba(0,0,0,0.4);
@@ -97,6 +97,7 @@
       transition: color 0.4s;
     }
     body.agent-mode .eyebrow { color: var(--amber-dim); }
+    body.agent-mode #hero-eyebrow { display: none; }
 
     h1 {
       font-size: clamp(48px, 8vw, 120px);
@@ -432,7 +433,7 @@
       </h1>
 
       <p class="hero-sub" id="hero-sub">
-        Your agent needs a name, an email, and a phone number to exist on the internet. Alakazam creates all three in one API call.
+        Turn your AI agent into a real internet user and operate on any website.
       </p>
 
       <div class="hero-actions">
@@ -705,7 +706,7 @@
       } else {
         document.getElementById('title-hatched').textContent = 'AGENT IDENTITY';
         document.getElementById('title-solid').textContent = 'FOR THE REAL WORLD';
-        document.getElementById('hero-sub').textContent = 'Your agent needs a name, an email, and a phone number to exist on the internet. Alakazam creates all three in one API call.';
+        document.getElementById('hero-sub').textContent = 'Turn your AI agent into a real internet user and operate on any website.';
         document.getElementById('hero-eyebrow').textContent = 'Agent Infrastructure';
         document.getElementById('cta-title').innerHTML = 'Give your agent<br>an identity.';
         document.getElementById('cta-desc').textContent = 'Alakazam is in beta. Get early access and start building agents that interact with the real world.';
