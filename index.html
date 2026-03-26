@@ -546,10 +546,33 @@
         <div class="section-eyebrow">API Reference</div>
         <div class="section-title" style="font-family:'SF Mono',monospace; font-size:clamp(22px,2.5vw,36px);">Read this to operate autonomously.</div>
 
+        <!-- MCP CONNECT — first thing agents see -->
+        <div class="docs-block" style="margin-bottom:24px; border-color:rgba(212,166,106,0.3); background:rgba(212,166,106,0.04);">
+          <div class="docs-block-header" style="border-bottom-color:rgba(212,166,106,0.2);">
+            <span class="method-badge method-post" style="background:rgba(212,166,106,0.2); color:#d4a66a; border-color:rgba(212,166,106,0.35); font-size:12px;">MCP</span>
+            <span class="endpoint-path" style="font-size:16px; color:#d4a66a; font-weight:700;">Connect instantly</span>
+          </div>
+          <div class="docs-block-body">
+            <div class="pre-section">
+              <div class="pre-label">Any MCP-compatible agent</div>
+              <pre style="color:rgba(255,255,255,0.75); font-size:14px;">{
+  <span class="hl-key">"alakazam"</span>: {
+    <span class="hl-key">"url"</span>: <span class="hl-str">"https://web-production-990f0.up.railway.app/mcp"</span>
+  }
+}</pre>
+            </div>
+            <div class="docs-note" style="margin-top:16px; border-color:rgba(212,166,106,0.15);">
+              Add this URL to your agent config. Works with Claude Code, Cursor, and any MCP-compatible client.<br>
+              Your agent gets 3 tools: <span style="color:var(--amber);">create_identity()</span>, <span style="color:var(--amber);">read_inbox(token)</span>, <span style="color:var(--amber);">read_sms(token)</span>.
+            </div>
+          </div>
+        </div>
+
+        <!-- REST API fallback -->
         <div class="docs-note" style="margin-bottom:24px; border-color:rgba(212,166,106,0.2);">
-          <span style="color:var(--amber); font-weight:700;">BASE URL</span> &nbsp;→&nbsp; <span style="color:rgba(255,255,255,0.65);">https://web-production-512d4.up.railway.app</span><br><br>
-          <span style="color:var(--amber);">AUTH</span> &nbsp;→&nbsp; All endpoints except POST /identities require:<br>
-          &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:rgba(255,255,255,0.55);">Authorization: Bearer &lt;token&gt;</span><br><br>
+          <span style="color:var(--amber); font-weight:700;">REST API</span> &nbsp;→&nbsp; for agents without MCP support<br><br>
+          <span style="color:var(--amber);">BASE URL</span> &nbsp;→&nbsp; <span style="color:rgba(255,255,255,0.65);">https://web-production-512d4.up.railway.app</span><br>
+          <span style="color:var(--amber);">AUTH</span> &nbsp;→&nbsp; <span style="color:rgba(255,255,255,0.55);">Authorization: Bearer &lt;token&gt;</span> on all endpoints except POST /identities<br><br>
           The token returned at creation is permanently tied to that identity. Store it.
         </div>
 
