@@ -464,30 +464,30 @@
         </div>
       </div>
 
-      <!-- AGENT TERMINAL CARD -->
+      <!-- AGENT MCP CARD -->
       <div class="hero-card hidden" id="card-agent">
-        <div class="terminal-card">
+        <div class="terminal-card" style="border-color:rgba(212,166,106,0.2);">
           <div class="terminal-bar">
             <span class="t-dot t-red"></span>
             <span class="t-dot t-yellow"></span>
             <span class="t-dot t-green"></span>
-            <span class="terminal-title">alakazam — terminal</span>
+            <span class="terminal-title">agent config</span>
           </div>
-          <div class="terminal-body">
-<span class="t-comment"># create an identity</span>
-<span class="t-prompt">$ </span><span class="t-cmd">curl -X POST https://web-production-512d4.up.railway.app/identities</span>
-<span class="t-out">{</span>
-<span class="t-out">  <span class="t-key">"token"</span>: <span class="t-str">"eyJhbGciOiJIUzI1NiJ9..."</span>,</span>
-<span class="t-out">  <span class="t-key">"name"</span>:  <span class="t-str">"Sophie Baker"</span>,</span>
-<span class="t-out">  <span class="t-key">"email"</span>: <span class="t-str">"sophie.baker@alakazam.xyz"</span>,</span>
-<span class="t-out">  <span class="t-key">"phone"</span>: <span class="t-str">"+1 361 322 2054"</span></span>
-<span class="t-out">}</span>
-
-<span class="t-comment"># read the inbox</span>
-<span class="t-prompt">$ </span><span class="t-cmd">curl https://web-production-512d4.up.railway.app/inbox \</span>
-<span class="t-cmd">    -H <span class="t-str">"Authorization: Bearer eyJhbG..."</span></span>
-<span class="t-out">{ <span class="t-key">"emails"</span>: [{ <span class="t-key">"body"</span>: <span class="t-str">"Your code is 482910"</span> }] }</span>
-<span class="t-prompt">$ </span><span class="t-cursor"></span>
+          <div class="terminal-body" style="padding:32px 36px;">
+            <div style="font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:rgba(212,166,106,0.3); margin-bottom:16px;">ADD TO YOUR AGENT</div>
+            <pre style="font-size:15px; line-height:1.9; color:rgba(255,255,255,0.8); margin:0;">{
+  <span class="t-key">"alakazam"</span>: {
+    <span class="t-key">"url"</span>: <span class="t-str">"https://web-production-990f0.up.railway.app/mcp"</span>
+  }
+}</pre>
+            <div style="margin-top:24px; padding-top:20px; border-top:1px solid rgba(212,166,106,0.1);">
+              <div style="font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:rgba(212,166,106,0.3); margin-bottom:14px;">YOUR AGENT GETS</div>
+              <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                <span style="font-family:'SF Mono',monospace; font-size:13px; padding:6px 14px; border-radius:6px; background:rgba(212,166,106,0.08); border:1px solid rgba(212,166,106,0.15); color:#d4a66a;">create_identity()</span>
+                <span style="font-family:'SF Mono',monospace; font-size:13px; padding:6px 14px; border-radius:6px; background:rgba(212,166,106,0.08); border:1px solid rgba(212,166,106,0.15); color:#d4a66a;">read_inbox()</span>
+                <span style="font-family:'SF Mono',monospace; font-size:13px; padding:6px 14px; border-radius:6px; background:rgba(212,166,106,0.08); border:1px solid rgba(212,166,106,0.15); color:#d4a66a;">read_sms()</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -719,9 +719,9 @@
       document.getElementById('btn-agent').classList.toggle('active', isAgent);
 
       if (isAgent) {
-        document.getElementById('title-hatched').textContent = '$ alakazam create';
-        document.getElementById('title-solid').textContent = '';
-        document.getElementById('hero-sub').textContent = 'POST /identities — one call, one token, one identity. Scroll down for the full API reference.';
+        document.getElementById('title-hatched').textContent = 'PLUG & PLAY';
+        document.getElementById('title-solid').textContent = 'AGENT IDENTITY';
+        document.getElementById('hero-sub').textContent = 'Add one URL to your agent. It gets a real name, email, and phone. No setup, no SDK, no code.';
         document.getElementById('hero-eyebrow').textContent = 'API v1 · REST · No SDK required';
         document.getElementById('cta-title').innerHTML = 'Ready to integrate?';
         document.getElementById('cta-desc').textContent = 'POST /identities → store your token → GET /inbox or /sms. Full reference above.';
