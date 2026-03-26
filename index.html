@@ -126,15 +126,11 @@
       transition: color 0.4s;
     }
     body.agent-mode .title-hatched {
-      background: repeating-linear-gradient(
-        90deg,
-        #d4a66a 0px, #d4a66a 2px,
-        transparent 2px, transparent 7px
-      );
-      -webkit-background-clip: text;
+      background: none;
+      -webkit-background-clip: unset;
+      background-clip: unset;
       -webkit-text-fill-color: transparent;
-      background-clip: text;
-      -webkit-text-stroke: 0;
+      -webkit-text-stroke: 2px var(--amber);
     }
     body.agent-mode .title-solid {
       color: var(--amber);
