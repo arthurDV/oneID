@@ -125,19 +125,19 @@
       letter-spacing: 2px;
       transition: color 0.4s;
     }
-    body.agent-mode h1 {
-      font-family: "SF Mono", monospace;
-      font-size: clamp(24px, 3.5vw, 52px);
-      letter-spacing: -1px;
-    }
     body.agent-mode .title-hatched {
+      background: repeating-linear-gradient(
+        90deg,
+        #d4a66a 0px, #d4a66a 2px,
+        transparent 2px, transparent 7px
+      );
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
       -webkit-text-stroke: 0;
-      -webkit-text-fill-color: var(--amber);
-      color: var(--amber);
     }
     body.agent-mode .title-solid {
-      color: var(--amber-dim);
-      font-size: 0.6em;
+      color: var(--amber);
     }
 
     .hero-sub {
@@ -719,8 +719,8 @@
       document.getElementById('btn-agent').classList.toggle('active', isAgent);
 
       if (isAgent) {
-        document.getElementById('title-hatched').textContent = 'PLUG & PLAY';
-        document.getElementById('title-solid').textContent = 'AGENT IDENTITY';
+        document.getElementById('title-hatched').textContent = 'ONE URL';
+        document.getElementById('title-solid').textContent = 'REAL IDENTITY';
         document.getElementById('hero-sub').textContent = 'Add one URL to your agent. It gets a real name, email, and phone. No setup, no SDK, no code.';
         document.getElementById('hero-eyebrow').textContent = 'API v1 · REST · No SDK required';
         document.getElementById('cta-title').innerHTML = 'Ready to integrate?';
