@@ -449,7 +449,7 @@
           <div class="human-row">
             <div class="human-icon">✉️</div>
             <span class="human-label">Email</span>
-            <span class="human-value">sophie.baker@alakazam.xyz</span>
+            <span class="human-value">sophie.baker@alakazam.run</span>
           </div>
           <div class="human-row">
             <div class="human-icon">📱</div>
@@ -567,7 +567,7 @@
         <!-- REST API fallback -->
         <div class="docs-note" style="margin-bottom:24px; border-color:rgba(212,166,106,0.2);">
           <span style="color:var(--amber); font-weight:700;">REST API</span> &nbsp;→&nbsp; for agents without MCP support<br><br>
-          <span style="color:var(--amber);">BASE URL</span> &nbsp;→&nbsp; <span style="color:rgba(255,255,255,0.65);">https://web-production-512d4.up.railway.app</span><br>
+          <span style="color:var(--amber);">BASE URL</span> &nbsp;→&nbsp; <span style="color:rgba(255,255,255,0.65);">https://alakazam.run</span><br>
           <span style="color:var(--amber);">AUTH</span> &nbsp;→&nbsp; <span style="color:rgba(255,255,255,0.55);">Authorization: Bearer &lt;token&gt;</span> on all endpoints except POST /identities<br><br>
           The token returned at creation is permanently tied to that identity. Store it.
         </div>
@@ -582,14 +582,14 @@
           <div class="docs-block-body">
             <div class="pre-section">
               <div class="pre-label">Request</div>
-              <pre>curl -X POST https://web-production-512d4.up.railway.app/identities</pre>
+              <pre>curl -X POST https://alakazam.run/identities</pre>
             </div>
             <div class="pre-section">
               <div class="pre-label">Response 201</div>
               <pre>{
   <span class="hl-key">"token"</span>: <span class="hl-str">"eyJhbGciOiJIUzI1NiJ9.eyJpZCI6ImE1YjJ..."</span>,  <span class="hl-comment">// store this</span>
   <span class="hl-key">"name"</span>:  <span class="hl-str">"Sophie Baker"</span>,
-  <span class="hl-key">"email"</span>: <span class="hl-str">"sophie.baker@alakazam.xyz"</span>,
+  <span class="hl-key">"email"</span>: <span class="hl-str">"sophie.baker@alakazam.run"</span>,
   <span class="hl-key">"phone"</span>: <span class="hl-str">"+1 361 322 2054"</span>    <span class="hl-comment">// null if unavailable</span>
 }</pre>
             </div>
@@ -606,13 +606,13 @@
           <div class="docs-block-body">
             <div class="pre-section">
               <div class="pre-label">Request</div>
-              <pre>curl https://web-production-512d4.up.railway.app/inbox \
+              <pre>curl https://alakazam.run/inbox \
   -H "Authorization: Bearer &lt;token&gt;"</pre>
             </div>
             <div class="pre-section">
               <div class="pre-label">Response 200</div>
               <pre>{
-  <span class="hl-key">"identity"</span>: { <span class="hl-key">"name"</span>: <span class="hl-str">"Sophie Baker"</span>, <span class="hl-key">"email"</span>: <span class="hl-str">"sophie.baker@alakazam.xyz"</span> },
+  <span class="hl-key">"identity"</span>: { <span class="hl-key">"name"</span>: <span class="hl-str">"Sophie Baker"</span>, <span class="hl-key">"email"</span>: <span class="hl-str">"sophie.baker@alakazam.run"</span> },
   <span class="hl-key">"count"</span>: 1,
   <span class="hl-key">"emails"</span>: [
     {
@@ -641,7 +641,7 @@
           <div class="docs-block-body">
             <div class="pre-section">
               <div class="pre-label">Request</div>
-              <pre>curl https://web-production-512d4.up.railway.app/sms \
+              <pre>curl https://alakazam.run/sms \
   -H "Authorization: Bearer &lt;token&gt;"</pre>
             </div>
             <div class="pre-section">
