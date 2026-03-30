@@ -26,7 +26,7 @@ DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 IDENTITIES_FILE = os.path.join(DATA_DIR, "identities.json")
 os.makedirs(DATA_DIR, exist_ok=True)
 
-TWILIO_READY = TWILIO_ACCOUNT_SID != "COLLE_TON_ACCOUNT_SID_ICI"
+TWILIO_READY = bool(TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN)
 
 
 # --- Storage ---
@@ -242,7 +242,7 @@ if __name__ == "__main__":
 ║                                          ║
 ║  🔒 One token = one identity             ║
 ║                                          ║
-║  Email : {"✅ MailSlurp" if MAILSLURP_API_KEY != "COLLE_TA_CLE_MAILSLURP_ICI" else "⚠️  not configured"}               ║
+║  Email : {"✅ MailSlurp" if MAILSLURP_API_KEY else "⚠️  not configured"}               ║
 ║  Phone : {"✅ Twilio  " if TWILIO_READY else "⚠️  not configured"}               ║
 ╚══════════════════════════════════════════╝
 """)
