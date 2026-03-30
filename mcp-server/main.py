@@ -11,7 +11,7 @@ import os
 import httpx
 from mcp.server.fastmcp import FastMCP
 
-API_URL = os.environ.get("ALAKAZAM_API_URL", "https://alakazam.run")
+API_URL = os.environ.get("ALAKAZAM_API_URL", "https://www.alakazam.run")
 MCP_PORT = int(os.environ.get("PORT", "8080"))
 
 mcp = FastMCP(
