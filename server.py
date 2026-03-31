@@ -111,8 +111,11 @@ class AgentIdentityHandler(BaseHTTPRequestHandler):
             self.wfile.write(content)
             return
 
-        # GET /stats — public count of identities created
-        if self.path == "/stats":
+        # GET /stats — protected count of identities created
+        if self.path.startswith("/stats"):
+            if "key=12345678!" not in self.path:
+                self._send_json(401, {"error": "Unauthorized"})
+                return
             identities = load_identities()
             self._send_json(200, {"identities_created": len(identities)})
             return
