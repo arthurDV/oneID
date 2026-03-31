@@ -111,6 +111,12 @@ class AgentIdentityHandler(BaseHTTPRequestHandler):
             self.wfile.write(content)
             return
 
+        # GET /stats — public count of identities created
+        if self.path == "/stats":
+            identities = load_identities()
+            self._send_json(200, {"identities_created": len(identities)})
+            return
+
         # GET /inbox — read emails for this token's identity
         if self.path == "/inbox":
             identity_id, identity = self._require_auth()
